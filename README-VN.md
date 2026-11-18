@@ -1127,6 +1127,19 @@ Tài liệu API hiện đã **đầy đủ**: mọi route phụ trợ đều đ�
 | `GET`  | `/api/workflows`              | Dữ liệu quy trình theo provider/source (điều phối, tool đã ghi, mẫu, compaction Codex). Các bộ lọc `?status=active\|completed`, `?sources=...` và `?providers=claude\|codex` áp dụng cho cả 11 phần dữ liệu |
 | `GET`  | `/api/workflows/session/:id`  | Drill-in từng phiên theo provider/source (cây agent, dòng thời gian tool đã ghi, sự kiện) |
 
+### Verifications ("Đã xác minh")
+
+Xác minh độc lập: dashboard chạy lại các lệnh của chính dự án trong một bản sao `git archive` sạch và lấy kết luận từ mã thoát và số lượng test trong log, không bao giờ từ agent. Lệnh chỉ nằm trong `verify.json` cạnh `.env` của dashboard (`DASHBOARD_VERIFY_CONFIG` để ghi đè); request không bao giờ chứa nội dung lệnh. Mỗi lần một lượt, từ chối khi ổ đĩa còn dưới 3 GB, bản sao tạm luôn bị xóa, log (đã che bí mật) nằm trong `<data dir>/verifications/`. WebSocket: `verification_updated`. Loại push `verified` / `verify_failed` theo `DASHBOARD_PUSH_EVENTS`.
+
+| Phương pháp | Con đường                          | Sự miêu tả                                             |
+| --- | --- | --- |
+| `POST` | `/api/sessions/:id/verify` | Đưa một lượt xác minh vào hàng đợi (không có body) |
+| `GET` | `/api/sessions/:id/verifications` | 20 lượt xác minh gần nhất + HEAD hiện tại (kiểm tra cũ) |
+| `GET` | `/api/verifications/latest?session_ids=a,b` | Lượt xác minh mới nhất cho mỗi phiên (huy hiệu danh sách) |
+| `GET` | `/api/verifications/:id/log` | Nội dung log, đã che bí mật |
+| `GET` | `/api/verifications/config` | Lệnh theo từng dự án |
+| `PUT` | `/api/verifications/config` | Thay lệnh theo từng dự án (có kiểm tra) |
+
 ### Cảnh báo
 
 | Phương thức | Đường dẫn | Mô tả |

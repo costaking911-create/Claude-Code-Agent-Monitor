@@ -294,6 +294,8 @@ import { SessionOverview } from "../components/SessionOverview";
 import { TodoProgressPanel } from "../components/TodoProgressPanel";
 import { ConversationView } from "../components/conversation/ConversationView";
 import { SessionStatusBadge, AgentStatusBadge, REASON_ICONS } from "../components/StatusBadge";
+import { VerificationBadge } from "../components/VerificationBadge";
+import { VerifyPanel } from "../components/VerifyPanel";
 import { CopyButton } from "../components/event-views/primitives";
 import {
   effectiveSessionStatus,
@@ -334,6 +336,7 @@ import type {
   CostResult,
   TranscriptInfo,
   WorkflowRun,
+  Verification,
 } from "../lib/types";
 import { WorkflowRunsPanel } from "../components/workflows/WorkflowRunsPanel";
 
@@ -391,6 +394,16 @@ export function SessionDetail() {
   // True when this session is currently being driven by an in-flight Run
   // handle on /run. Drives the "Open in Run page" banner up top.
   const [isDashboardRun, setIsDashboardRun] = useState(false);
+  // Latest independent verification ("verified" state), reported up by VerifyPanel so the
+  // header badge needs no second fetch.
+  const [verification, setVerification] = useState<{
+    latest: Verification | null;
+    stale: boolean;
+  }>({ latest: null, stale: false });
+  const onVerificationChange = useCallback(
+    (latest: Verification | null, stale: boolean) => setVerification({ latest, stale }),
+    []
+  );
   const [error, setError] = useState<string | null>(null);
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(() => {
     return new Set<string>();
@@ -905,7 +918,7 @@ export function SessionDetail() {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-2">
             <h2 className="text-xl font-semibold text-gray-100">
               {session.name || `${t("defaultName")}${session.id.slice(0, 8)}`}
             </h2>
@@ -914,6 +927,7 @@ export function SessionDetail() {
               reason={sessionAwaitingReason(session)}
               provider={session.provider}
             />
+            <VerificationBadge verification={verification.latest} stale={verification.stale} />
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
             <span className="inline-flex items-center gap-1 text-xs text-gray-500 font-mono bg-surface-2 px-2 py-1 rounded">
@@ -956,6 +970,9 @@ export function SessionDetail() {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Independent "verified" check (server re-runs the project's tests). */}
+      <VerifyPanel sessionId={session.id} onLatestChange={onVerificationChange} />
 
       {/* Waiting-for-input callout: WHY the session sits in the yellow Waiting
           state (awaiting_reason) and for how long. Reason-specific icon/label

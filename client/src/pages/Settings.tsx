@@ -353,6 +353,7 @@ import { ImportHistory } from "../components/ImportHistory";
 import { RemoteSources } from "../components/RemoteSources";
 import { Skeleton } from "../components/Skeleton";
 import { AlertsNotifications } from "../components/AlertsNotifications";
+import { VerifySettings } from "../components/VerifySettings";
 import { SnapshotStorage, formatStorageBytes } from "../components/SnapshotStorage";
 import type { CursorModelPricing, GptModelPricing, ModelPricing, WSMessage } from "../lib/types";
 import { useDataScope, type ProviderScope } from "../lib/dataScope";
@@ -360,7 +361,7 @@ import { useDataScope, type ProviderScope } from "../lib/dataScope";
 /**
  * In-page navigation for the dense Settings screen. Each entry maps to a `<section id>` rendered
  * below, in page order (data display, the three pricing tables, hooks, session homes, import,
- * remote sources, Tabby, sound, notifications, alerts, data, and about); the table of contents
+ * remote sources, Tabby, sound, notifications, alerts, verification, data, and about); the table of contents
  * scroll-spies the active one.
  */
 const SETTINGS_SECTIONS: {
@@ -386,6 +387,7 @@ const SETTINGS_SECTIONS: {
   { id: "sound", labelKey: "sound.title", fallback: "Sound", Icon: Volume2 },
   { id: "notifications", labelKey: "notifications.title", Icon: Bell },
   { id: "alerts", labelKey: "alertsHub.title", Icon: BellRing },
+  { id: "verification", labelKey: "verify.title", Icon: ShieldCheck },
   { id: "data", labelKey: "data.title", Icon: Database },
   { id: "about", labelKey: "about.title", Icon: Server },
 ];
@@ -3450,6 +3452,16 @@ export function Settings() {
         </h3>
         <p className="text-xs text-gray-500 mb-4">{t("alertsHub.description")}</p>
         <AlertsNotifications />
+      </section>
+
+      {/* ─── VERIFICATION ("verified" state) ─── */}
+      <section id="verification" className="scroll-mt-24">
+        <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1">
+          <ShieldCheck className="w-4 h-4 text-gray-500" />
+          {t("verify.title")}
+        </h3>
+        <p className="text-xs text-gray-500 mb-4">{t("verify.description")}</p>
+        <VerifySettings />
       </section>
 
       {/* ─── DATA MANAGEMENT ─── */}

@@ -516,6 +516,14 @@ vi.mock("../../lib/api", async (importOriginal) => {
         facets: r({ event_types: [], tool_names: [] }),
       },
       analytics: { get: r(analytics) },
+      verifications: {
+        start: r({ verification: null }),
+        list: r({ verifications: [], current_head: null }),
+        latest: r({ latest: {} }),
+        log: r(""),
+        getConfig: r({ path: "/x/verify.json", projects: [] }),
+        saveConfig: r({ path: "/x/verify.json", projects: [] }),
+      },
       workflows: {
         get: r(emptyWorkflow),
         session: r({}),

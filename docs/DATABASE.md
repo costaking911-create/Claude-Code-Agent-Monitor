@@ -594,6 +594,35 @@ Managed through the `/api/remote-sources/*` routes. One source may expose Claude
 
 ---
 
+### verifications
+
+Independent verification runs ("Verified", see `server/lib/verify-runner.js`). One row per run of a
+session's repository at a commit; the verdict comes from the configured check command's exit code
+and the test count parsed from the log, never from the agent. `status` (`queued` | `running` |
+`done`) and `verdict` (`verified` | `failed` | `error`, NULL until done) are open strings with no
+CHECK. Rows left `queued`/`running` by a restart are marked `error` on startup. `review_*` columns
+are reserved for the blind reviewer (later phase). Cascades with its session.
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | INTEGER PK | Autoincrement |
+| `session_id` | TEXT | FK → `sessions.id` (ON DELETE CASCADE) |
+| `workflow_run_id` | TEXT | Optional Workflow run (later phase) |
+| `project_dir` | TEXT | Git work tree that was verified |
+| `commit_sha` | TEXT | Commit extracted with `git archive` |
+| `dirty` | INTEGER | 1 when uncommitted changes existed (not included) |
+| `requirements` | TEXT | Reserved for the blind reviewer |
+| `setup_cmd` / `check_cmd` | TEXT | Copies of the commands that ran (from `verify.json`) |
+| `log_path` | TEXT | Log file under `<data dir>/verifications/` (never sent to clients) |
+| `setup_exit` / `check_exit` | INTEGER | Exit codes (NULL when not run or killed) |
+| `tests_count` | INTEGER | Last count matched by the project's regex |
+| `timed_out` | INTEGER | 1 when the timeout killed a command |
+| `status` / `verdict` / `reason` | TEXT | Progress, outcome, short English reason |
+| `review_verdict` / `review_json` / `review_log_path` | TEXT | Reserved (blind reviewer) |
+| `created_at` / `started_at` / `ended_at` | TEXT | ISO timestamps |
+
+Index: `idx_verifications_session (session_id, id)`.
+
 ## Indexes
 
 ### sessions Indexes

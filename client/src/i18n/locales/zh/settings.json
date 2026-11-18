@@ -644,5 +644,24 @@
     "remoteSourceBadgeTitle": "从远程机器收集",
     "retryLastError": "正在重试。上次错误："
   },
-  "cursorPathsNote": "Cursor 已包含在 Claude Code 仪表板范围内。本地历史会自动从 ~/.cursor 发现并创建快照；仅同步 Claude 的 SSH 导入不会同步远程 Cursor 文件夹。"
+  "cursorPathsNote": "Cursor 已包含在 Claude Code 仪表板范围内。本地历史会自动从 ~/.cursor 发现并创建快照；仅同步 Claude 的 SSH 导入不会同步远程 Cursor 文件夹。",
+  "verify": {
+    "title": "验证",
+    "description": "仪表盘可重新运行其测试以将会话标记为“已验证”的项目。",
+    "safetyNote": "这些命令在本机运行，并且只从这里读取——绝不来自 agent。",
+    "loading": "加载中…",
+    "empty": "还没有项目。添加一个项目以启用验证。",
+    "projectN": "项目 {{n}}",
+    "remove": "移除",
+    "fieldDir": "项目文件夹",
+    "fieldSetup": "准备命令（可选）",
+    "fieldCheck": "测试命令",
+    "fieldRegex": "测试数量正则",
+    "fieldTimeout": "超时（秒）",
+    "add": "添加项目",
+    "save": "保存",
+    "saved": "已保存",
+    "saveError": "无法保存：{{message}}",
+    "configPath": "配置文件："
+  }
 }

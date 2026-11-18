@@ -14,6 +14,7 @@ const ccConfig = require("./openapi-extra/cc-config");
 const codexConfig = require("./openapi-extra/codex-config");
 const run = require("./openapi-extra/run");
 const push = require("./openapi-extra/push");
+const verifications = require("./openapi-extra/verifications");
 const misc = require("./openapi-extra/misc");
 // Enriched overrides of already-documented endpoints — same operationId, tags,
 // and request/response `$ref` schemas as the base, with added examples and
@@ -47,6 +48,7 @@ module.exports = combine(
   codexConfig,
   run,
   push,
+  verifications,
   misc,
   overrideSessionsAgents,
   overrideCore,

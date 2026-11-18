@@ -88,5 +88,43 @@
       "loadOlder": "↑ Cargar mensajes anteriores"
     }
   },
-  "remoteSourceBadgeTitle": "Recopilado desde una máquina remota"
+  "remoteSourceBadgeTitle": "Recopilado desde una máquina remota",
+  "verify": {
+    "title": "Verificación",
+    "description": "El panel vuelve a ejecutar por sí mismo las pruebas del proyecto, en una copia limpia del último commit de git. El resultado nunca viene del agente.",
+    "button": "Verificar",
+    "checking": "Comprobando…",
+    "loading": "Cargando…",
+    "empty": "Aún no verificado. Pulsa Verificar para ejecutar las pruebas.",
+    "staleNote": "Hay commits nuevos desde esta comprobación. Verifica de nuevo para comprobar el código actual.",
+    "dirtyWarning": "Hay cambios sin guardar en git: solo se comprobó lo guardado",
+    "commit": "Commit",
+    "tests": "Pruebas",
+    "exitCodes": "Código de salida",
+    "duration": "Duración",
+    "timedOut": "La comprobación tardó demasiado y se detuvo.",
+    "reason": "Motivo",
+    "command": "Comando",
+    "log": "Registro",
+    "showAll": "Mostrar todo ({{n}} líneas)",
+    "showTail": "Mostrar las últimas {{n}} líneas",
+    "noLog": "No hay registro.",
+    "history": "Comprobaciones anteriores",
+    "testsCount": "{{n}} pruebas",
+    "openSettings": "Abrir ajustes",
+    "badge": {
+      "verified": "Verificado",
+      "stale": "Verificado (antiguo)",
+      "failed": "No verificado",
+      "error": "Error de verificación",
+      "checking": "Comprobando…"
+    },
+    "errors": {
+      "NOT_CONFIGURED": "Todavía no hay un comando de pruebas para este proyecto.",
+      "NOT_GIT": "La carpeta del proyecto no es un repositorio git, así que no se puede verificar.",
+      "NO_CWD": "Esta sesión no tiene carpeta de proyecto, así que no se puede verificar.",
+      "NOT_FOUND": "Sesión no encontrada.",
+      "generic": "No se pudo iniciar la comprobación: {{message}}"
+    }
+  }
 }

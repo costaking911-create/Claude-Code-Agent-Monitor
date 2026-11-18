@@ -644,5 +644,24 @@
     "remoteSourceBadgeTitle": "Recopilado desde una máquina remota",
     "retryLastError": "Reintentando. Último error:"
   },
-  "cursorPathsNote": "Cursor está incluido en el ámbito de Claude Code del panel. El historial local se detecta y conserva automáticamente desde ~/.cursor; las importaciones SSH solo de Claude no sincronizan carpetas remotas de Cursor."
+  "cursorPathsNote": "Cursor está incluido en el ámbito de Claude Code del panel. El historial local se detecta y conserva automáticamente desde ~/.cursor; las importaciones SSH solo de Claude no sincronizan carpetas remotas de Cursor.",
+  "verify": {
+    "title": "Verificación",
+    "description": "Proyectos cuyas pruebas el panel puede volver a ejecutar para marcar una sesión como Verificada.",
+    "safetyNote": "Estos comandos se ejecutan en este equipo y solo se toman de aquí, nunca de un agente.",
+    "loading": "Cargando…",
+    "empty": "Aún no hay proyectos. Añade uno para activar Verificar.",
+    "projectN": "Proyecto {{n}}",
+    "remove": "Quitar",
+    "fieldDir": "Carpeta del proyecto",
+    "fieldSetup": "Comando de preparación (opcional)",
+    "fieldCheck": "Comando de pruebas",
+    "fieldRegex": "Regex del número de pruebas",
+    "fieldTimeout": "Tiempo límite (segundos)",
+    "add": "Añadir proyecto",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "saveError": "No se pudo guardar: {{message}}",
+    "configPath": "Archivo de configuración:"
+  }
 }

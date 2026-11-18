@@ -88,5 +88,43 @@
     "transcript": {
       "loadOlder": "↑ 이전 메시지 불러오기"
     }
+  },
+  "verify": {
+    "title": "검증",
+    "description": "대시보드가 마지막 git 커밋의 깨끗한 복사본에서 프로젝트 테스트를 직접 다시 실행합니다. 결과는 에이전트가 정하지 않습니다.",
+    "button": "검증",
+    "checking": "확인 중…",
+    "loading": "불러오는 중…",
+    "empty": "아직 검증되지 않았습니다. 검증을 눌러 테스트를 실행하세요.",
+    "staleNote": "이 확인 이후 새 커밋이 있습니다. 최신 코드를 확인하려면 다시 검증하세요.",
+    "dirtyWarning": "git에 저장되지 않은 변경 사항이 있습니다 – 저장된 내용만 확인했습니다",
+    "commit": "커밋",
+    "tests": "테스트",
+    "exitCodes": "종료 코드",
+    "duration": "소요 시간",
+    "timedOut": "확인이 너무 오래 걸려 중지되었습니다.",
+    "reason": "이유",
+    "command": "명령",
+    "log": "로그",
+    "showAll": "모두 보기 ({{n}}줄)",
+    "showTail": "마지막 {{n}}줄만 보기",
+    "noLog": "로그가 없습니다.",
+    "history": "이전 확인",
+    "testsCount": "테스트 {{n}}개",
+    "openSettings": "설정 열기",
+    "badge": {
+      "verified": "검증됨",
+      "stale": "검증됨 (이전)",
+      "failed": "검증 실패",
+      "error": "검증 오류",
+      "checking": "확인 중…"
+    },
+    "errors": {
+      "NOT_CONFIGURED": "이 프로젝트에는 아직 테스트 명령이 설정되지 않았습니다.",
+      "NOT_GIT": "프로젝트 폴더가 git 저장소가 아니어서 검증할 수 없습니다.",
+      "NO_CWD": "이 세션에는 프로젝트 폴더가 없어 검증할 수 없습니다.",
+      "NOT_FOUND": "세션을 찾을 수 없습니다.",
+      "generic": "확인을 시작하지 못했습니다: {{message}}"
+    }
   }
 }

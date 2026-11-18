@@ -45,6 +45,7 @@ const analyticsRouter = require("./routes/analytics");
 const pricingRouter = require("./routes/pricing");
 const settingsRouter = require("./routes/settings");
 const workflowsRouter = require("./routes/workflows");
+const verificationsRoutes = require("./routes/verifications");
 const pushRouter = require("./routes/push");
 const importRouter = require("./routes/import");
 const updatesRouter = require("./routes/updates");
@@ -86,7 +87,9 @@ function createApp() {
   app.use("/api", gzipJson());
   app.use("/api/hooks", hookGuard);
 
+  app.use("/api/sessions", verificationsRoutes.sessionRoutes);
   app.use("/api/sessions", sessionsRouter);
+  app.use("/api/verifications", verificationsRoutes.verificationRoutes);
   app.use("/api/agents", agentsRouter);
   app.use("/api/events", eventsRouter);
   app.use("/api/stats", statsRouter);

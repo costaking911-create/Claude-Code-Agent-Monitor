@@ -88,5 +88,43 @@
     "transcript": {
       "loadOlder": "↑ Tải các tin nhắn cũ hơn"
     }
+  },
+  "verify": {
+    "title": "Xác minh",
+    "description": "Bảng điều khiển tự chạy lại các bài kiểm thử của dự án trên một bản sao sạch của commit git gần nhất. Kết quả không bao giờ đến từ agent.",
+    "button": "Xác minh",
+    "checking": "Đang kiểm tra…",
+    "loading": "Đang tải…",
+    "empty": "Chưa được xác minh. Nhấn Xác minh để chạy kiểm thử.",
+    "staleNote": "Có commit mới kể từ lần kiểm tra này. Xác minh lại để kiểm tra mã mới nhất.",
+    "dirtyWarning": "Có thay đổi chưa lưu trong git – chỉ phần đã lưu được kiểm tra",
+    "commit": "Commit",
+    "tests": "Kiểm thử",
+    "exitCodes": "Mã thoát",
+    "duration": "Thời gian",
+    "timedOut": "Việc kiểm tra mất quá lâu và đã bị dừng.",
+    "reason": "Lý do",
+    "command": "Lệnh",
+    "log": "Nhật ký",
+    "showAll": "Hiện tất cả ({{n}} dòng)",
+    "showTail": "Chỉ hiện {{n}} dòng cuối",
+    "noLog": "Không có nhật ký.",
+    "history": "Các lần kiểm tra trước",
+    "testsCount": "{{n}} kiểm thử",
+    "openSettings": "Mở cài đặt",
+    "badge": {
+      "verified": "Đã xác minh",
+      "stale": "Đã xác minh (cũ)",
+      "failed": "Chưa đạt",
+      "error": "Lỗi xác minh",
+      "checking": "Đang kiểm tra…"
+    },
+    "errors": {
+      "NOT_CONFIGURED": "Dự án này chưa có lệnh kiểm thử.",
+      "NOT_GIT": "Thư mục dự án không phải kho git nên không thể xác minh.",
+      "NO_CWD": "Phiên này không có thư mục dự án nên không thể xác minh.",
+      "NOT_FOUND": "Không tìm thấy phiên.",
+      "generic": "Không thể bắt đầu kiểm tra: {{message}}"
+    }
   }
 }

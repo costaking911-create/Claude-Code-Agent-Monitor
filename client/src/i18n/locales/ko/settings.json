@@ -644,5 +644,24 @@
     "remoteSourceBadgeTitle": "원격 머신에서 수집됨",
     "retryLastError": "재시도 중. 마지막 오류:"
   },
-  "cursorPathsNote": "Cursor는 Claude Code 대시보드 범위에 포함됩니다. 로컬 기록은 ~/.cursor에서 자동 검색 및 스냅샷되며 Claude 전용 SSH 가져오기는 원격 Cursor 폴더를 동기화하지 않습니다."
+  "cursorPathsNote": "Cursor는 Claude Code 대시보드 범위에 포함됩니다. 로컬 기록은 ~/.cursor에서 자동 검색 및 스냅샷되며 Claude 전용 SSH 가져오기는 원격 Cursor 폴더를 동기화하지 않습니다.",
+  "verify": {
+    "title": "검증",
+    "description": "세션을 검증됨으로 표시하기 위해 대시보드가 테스트를 다시 실행할 수 있는 프로젝트입니다.",
+    "safetyNote": "이 명령은 이 컴퓨터에서 실행되며 오직 여기서만 가져옵니다 – 에이전트에서 가져오지 않습니다.",
+    "loading": "불러오는 중…",
+    "empty": "아직 프로젝트가 없습니다. 검증을 사용하려면 추가하세요.",
+    "projectN": "프로젝트 {{n}}",
+    "remove": "제거",
+    "fieldDir": "프로젝트 폴더",
+    "fieldSetup": "준비 명령 (선택)",
+    "fieldCheck": "테스트 명령",
+    "fieldRegex": "테스트 수 정규식",
+    "fieldTimeout": "제한 시간 (초)",
+    "add": "프로젝트 추가",
+    "save": "저장",
+    "saved": "저장됨",
+    "saveError": "저장하지 못했습니다: {{message}}",
+    "configPath": "설정 파일:"
+  }
 }

@@ -644,5 +644,24 @@
     "remoteSourceBadgeTitle": "Collected from a remote machine",
     "retryLastError": "Retrying. Last error:"
   },
-  "cursorPathsNote": "Cursor is included with the Claude Code dashboard scope. Local history is discovered and snapshotted from ~/.cursor automatically; remote Cursor folders are not synced by Claude-only SSH imports."
+  "cursorPathsNote": "Cursor is included with the Claude Code dashboard scope. Local history is discovered and snapshotted from ~/.cursor automatically; remote Cursor folders are not synced by Claude-only SSH imports.",
+  "verify": {
+    "title": "Verification",
+    "description": "Projects whose tests the dashboard may re-run to mark a session as Verified.",
+    "safetyNote": "These commands run on this computer, and they are only ever taken from here – never from an agent.",
+    "loading": "Loading…",
+    "empty": "No projects yet. Add one to enable Verify.",
+    "projectN": "Project {{n}}",
+    "remove": "Remove",
+    "fieldDir": "Project folder",
+    "fieldSetup": "Setup command (optional)",
+    "fieldCheck": "Test command",
+    "fieldRegex": "Test count regex",
+    "fieldTimeout": "Timeout (seconds)",
+    "add": "Add project",
+    "save": "Save",
+    "saved": "Saved",
+    "saveError": "Could not save: {{message}}",
+    "configPath": "Config file:"
+  }
 }

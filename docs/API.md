@@ -1055,6 +1055,33 @@ curl http://localhost:4820/api/sessions/sess_abc123/notifications
 }
 ```
 
+### Verifications
+
+Independent verification ("Verified"): the server re-runs the project's own configured commands in a
+clean `git archive` copy of the session's repository and takes the verdict only from the check
+command's exit code and the test count parsed from the log (`testCountRegex`, one capture group).
+Commands live only in `verify.json` next to the dashboard `.env` (override with
+`DASHBOARD_VERIFY_CONFIG`); no request ever carries command text. One run at a time; a run is
+refused (verdict `error`) below 3 GB free disk; the temp copy is always deleted; logs are written
+with secrets masked to `<data dir>/verifications/<id>.log`. State-changing routes refuse
+cross-site browser requests (Origin host must be loopback or equal the request Host).
+
+```http
+POST /api/sessions/:id/verify            # body must be empty → 202 { verification }
+GET  /api/sessions/:id/verifications     # { verifications: [...20 newest], current_head }
+GET  /api/verifications/latest?session_ids=a,b   # { latest: { <sessionId>: Verification } }
+GET  /api/verifications/:id/log          # text/plain, last 5 MB
+GET  /api/verifications/config           # { path, projects: [{ dir, setupCmd, checkCmd, testCountRegex, timeoutSec }] }
+PUT  /api/verifications/config           # same body; 400 { error: { code: "INVALID", message, field } }
+```
+
+Errors from `POST …/verify`: `404 NOT_FOUND`, `409 NO_CWD | NOT_GIT | NOT_CONFIGURED`, `400 INVALID`
+(a body was sent), `403 EBADORIGIN`. A second request while one is queued/running returns the active
+row. Verdicts: `verified` (exit 0 and test count > 0), `failed` (non-zero exit, timeout, setup
+failure, no count found, or 0 tests), `error` (low disk, extraction failure, dashboard restarted).
+WebSocket message `verification_updated` carries the row on every status change. Push kinds
+`verified` / `verify_failed` are sent whenever `DASHBOARD_PUSH_EVENTS` enables any kind.
+
 ### Webhooks
 
 The `/api/webhooks/*` namespace manages alert-delivery targets and their audit log.

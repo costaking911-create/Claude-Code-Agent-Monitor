@@ -803,6 +803,10 @@ import type {
   TranscriptListResult,
   TranscriptResult,
   UpdateStatusPayload,
+  Verification,
+  VerificationsResponse,
+  VerifyConfig,
+  VerifyProject,
   WebhookDelivery,
   WebhookProvider,
   WebhookTarget,
@@ -955,9 +959,35 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     // isn't JSON (or json() throws), fall back to an empty object so the `?.`
     // chain below cleanly degrades to the generic `HTTP <status>` message.
     const body = await res.json().catch(() => ({}));
-    throw new Error(body?.error?.message || `HTTP ${res.status}`);
+    throw new ApiError(
+      body?.error?.message || `HTTP ${res.status}`,
+      res.status,
+      typeof body?.error?.code === "string" ? body.error.code : undefined,
+      typeof body?.error?.field === "string" ? body.error.field : undefined
+    );
   }
   return res.json();
+}
+
+/**
+ * Error thrown by {@link request} for a non-2xx response. It is still an `Error` (so existing
+ * `err.message` callers are unchanged) and additionally carries the HTTP status and the server's
+ * machine-readable `error.code` / `error.field`, so screens can show a localized message per code.
+ */
+export class ApiError extends Error {
+  /** HTTP status of the failed response. */
+  status: number;
+  /** The server's `error.code` (for example `NOT_CONFIGURED`), when the body had one. */
+  code?: string;
+  /** The server's `error.field` (which input failed validation), when the body had one. */
+  field?: string;
+  constructor(message: string, status: number, code?: string, field?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+    this.field = field;
+  }
 }
 
 /**
@@ -1792,6 +1822,48 @@ export const api = {
         `/workflows/runs/${encodeURIComponent(runId)}${qs.size ? `?${qs.toString()}` : ""}`
       );
     },
+  },
+
+  // ───────────────────────────── Verifications API ────────────────────────────
+  /** Independent "verified" checks: the server re-runs a project's test command in a clean
+   *  `git archive` copy and decides the verdict from exit code + test count, never from the
+   *  agent. Config (which projects and commands) is edited only from Settings. */
+  verifications: {
+    /** POST /api/sessions/:id/verify - queue a new verification (202). Rejects with an
+     *  {@link ApiError} whose `code` is NOT_FOUND / NOT_CONFIGURED / NOT_GIT / NO_CWD. */
+    start: (sessionId: string) =>
+      request<{ verification: Verification }>(`/sessions/${encodeURIComponent(sessionId)}/verify`, {
+        method: "POST",
+        body: JSON.stringify({}),
+      }),
+    /** GET /api/sessions/:id/verifications - newest first (max 20) plus the repo's current HEAD. */
+    list: (sessionId: string) =>
+      request<VerificationsResponse>(`/sessions/${encodeURIComponent(sessionId)}/verifications`),
+    /** GET /api/verifications/latest?session_ids=… - latest verification per session (max 200). */
+    latest: (sessionIds: string[]) => {
+      const ids = sessionIds.slice(0, 200);
+      const qs = new URLSearchParams({ session_ids: ids.join(",") });
+      return request<{ latest: Record<string, Verification> }>(
+        `/verifications/latest?${qs.toString()}`
+      );
+    },
+    /** GET /api/verifications/:id/log - the full run log as plain text. */
+    log: async (id: number): Promise<string> => {
+      const res = await fetch(`${BASE}/verifications/${encodeURIComponent(String(id))}/log`, {
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new ApiError(`HTTP ${res.status}`, res.status);
+      return res.text();
+    },
+    /** GET /api/verifications/config - the per-project commands and the config file path. */
+    getConfig: () => request<VerifyConfig>("/verifications/config"),
+    /** PUT /api/verifications/config - replace the project list. Rejects with an
+     *  {@link ApiError} (`code: "INVALID"`, optional `field`) on validation failure. */
+    saveConfig: (projects: VerifyProject[]) =>
+      request<VerifyConfig>("/verifications/config", {
+        method: "PUT",
+        body: JSON.stringify({ projects }),
+      }),
   },
 
   // ─────────────────────────────── Pricing API ────────────────────────────────

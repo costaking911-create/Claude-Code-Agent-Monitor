@@ -1136,6 +1136,19 @@ npm run openapi:yaml
 | `GET` | `/api/workflows` | Agrupa los datos del flujo de trabajo (orquestación, herramientas, patrones). El filtro opcional de la consulta `?status=active\|completed` filtra todas las 11 secciones de datos por el estado de la sesión |
 | `GET` | `/api/workflows/session/:id` | Entrenamiento por sesión (árbol de agentes, cronología de herramientas, eventos) |
 
+### Verificaciones ("Verificado")
+
+Verificación independiente: el panel vuelve a ejecutar los comandos del propio proyecto en una copia limpia de `git archive` y toma el veredicto del código de salida y del número de pruebas en el log, nunca del agente. Los comandos viven solo en `verify.json`, junto al `.env` del panel (`DASHBOARD_VERIFY_CONFIG` lo sustituye); las peticiones nunca llevan texto de comandos. Una ejecución a la vez, se rechaza con menos de 3 GB libres, la copia temporal siempre se borra, los logs (secretos ocultos) están en `<data dir>/verifications/`. WebSocket: `verification_updated`. Los tipos de push `verified` / `verify_failed` siguen `DASHBOARD_PUSH_EVENTS`.
+
+| Método | Camino                          | Descripción                                             |
+| --- | --- | --- |
+| `POST` | `/api/sessions/:id/verify` | Encolar una verificación (sin cuerpo) |
+| `GET` | `/api/sessions/:id/verifications` | Últimas 20 verificaciones + HEAD actual (comprobación de antigüedad) |
+| `GET` | `/api/verifications/latest?session_ids=a,b` | Última verificación por sesión (insignias de la lista) |
+| `GET` | `/api/verifications/:id/log` | Texto del log, secretos ocultos |
+| `GET` | `/api/verifications/config` | Comandos por proyecto |
+| `PUT` | `/api/verifications/config` | Reemplazar comandos por proyecto (validados) |
+
 ### Alertas
 
 | Método | Ruta                     | Descripción                                                                 |

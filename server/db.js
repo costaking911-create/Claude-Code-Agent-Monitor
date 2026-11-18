@@ -616,6 +616,40 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_workflows_session ON workflows(session_id);
   CREATE INDEX IF NOT EXISTS idx_workflows_status ON workflows(status);
+
+  -- Independent verification ("Verified") of a session's work: the dashboard
+  -- re-runs the project's own configured commands in a clean git-archive copy
+  -- and takes the verdict from the exit code + the test count in the log,
+  -- never from the agent. status: queued | running | done; verdict:
+  -- verified | failed | error (NULL until done). Open strings, no CHECK.
+  CREATE TABLE IF NOT EXISTS verifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    workflow_run_id TEXT,
+    project_dir TEXT NOT NULL,
+    commit_sha TEXT,
+    dirty INTEGER NOT NULL DEFAULT 0,
+    requirements TEXT,
+    setup_cmd TEXT,
+    check_cmd TEXT NOT NULL,
+    log_path TEXT,
+    setup_exit INTEGER,
+    check_exit INTEGER,
+    tests_count INTEGER,
+    timed_out INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'queued',
+    verdict TEXT,
+    reason TEXT,
+    review_verdict TEXT,
+    review_json TEXT,
+    review_log_path TEXT,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    started_at TEXT,
+    ended_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_verifications_session ON verifications(session_id, id);
 `);
 
 // Early Cursor usage builds keyed turns by (session_id, generation_id). Cursor

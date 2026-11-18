@@ -644,5 +644,24 @@
     "remoteSourceBadgeTitle": "Được thu thập từ một máy từ xa",
     "retryLastError": "Đang thử lại. Lỗi gần nhất:"
   },
-  "cursorPathsNote": "Cursor được bao gồm trong phạm vi dashboard Claude Code. Lịch sử cục bộ được tự động phát hiện và lưu snapshot từ ~/.cursor; import SSH chỉ đồng bộ Claude không đồng bộ thư mục Cursor từ xa."
+  "cursorPathsNote": "Cursor được bao gồm trong phạm vi dashboard Claude Code. Lịch sử cục bộ được tự động phát hiện và lưu snapshot từ ~/.cursor; import SSH chỉ đồng bộ Claude không đồng bộ thư mục Cursor từ xa.",
+  "verify": {
+    "title": "Xác minh",
+    "description": "Các dự án mà bảng điều khiển được phép chạy lại kiểm thử để đánh dấu phiên là Đã xác minh.",
+    "safetyNote": "Các lệnh này chạy trên máy tính này và chỉ được lấy từ đây – không bao giờ từ agent.",
+    "loading": "Đang tải…",
+    "empty": "Chưa có dự án. Thêm một dự án để bật Xác minh.",
+    "projectN": "Dự án {{n}}",
+    "remove": "Xóa",
+    "fieldDir": "Thư mục dự án",
+    "fieldSetup": "Lệnh chuẩn bị (tùy chọn)",
+    "fieldCheck": "Lệnh kiểm thử",
+    "fieldRegex": "Regex số lượng kiểm thử",
+    "fieldTimeout": "Thời gian chờ (giây)",
+    "add": "Thêm dự án",
+    "save": "Lưu",
+    "saved": "Đã lưu",
+    "saveError": "Không thể lưu: {{message}}",
+    "configPath": "Tệp cấu hình:"
+  }
 }

@@ -1146,6 +1146,19 @@ API 文档现已**全面覆盖**：每个后端路由都有文档说明（共 82
 | `GET` | `/api/workflows` | 按 Provider/来源限定的工作流数据（编排、已记录工具、模式、Codex 压缩）。可选的 `?status=active\|completed`、`?sources=...` 和 `?providers=claude\|codex` 筛选器适用于全部 11 个数据区域 |
 | `GET` | `/api/workflows/session/:id` | 按 provider/source 的单会话 drill-in（agent 树、已记录工具时间线、事件） |
 
+### Verifications（“已验证”）
+
+独立验证：仪表板在干净的 `git archive` 副本中重新运行项目自己的命令，结论只取自退出码和日志中的测试数量，绝不取自 agent。命令只存放在仪表板 `.env` 旁的 `verify.json`（可用 `DASHBOARD_VERIFY_CONFIG` 覆盖）；请求从不携带命令文本。一次只运行一个，磁盘可用空间低于 3 GB 时拒绝，临时副本总会删除，日志（已遮蔽密钥）位于 `<data dir>/verifications/`。WebSocket：`verification_updated`。推送类型 `verified` / `verify_failed` 遵循 `DASHBOARD_PUSH_EVENTS`。
+
+| 方法 | 路径 | 描述 |
+| --- | --- | --- |
+| `POST` | `/api/sessions/:id/verify` | 排队一次验证（无请求体） |
+| `GET` | `/api/sessions/:id/verifications` | 最近 20 次验证 + 当前 HEAD（过期检查） |
+| `GET` | `/api/verifications/latest?session_ids=a,b` | 每个会话的最新验证（列表徽章） |
+| `GET` | `/api/verifications/:id/log` | 日志文本，已遮蔽密钥 |
+| `GET` | `/api/verifications/config` | 按项目的命令 |
+| `PUT` | `/api/verifications/config` | 替换按项目的命令（已校验） |
+
 ### 告警
 
 | 方法 | 路径 | 描述 |

@@ -88,5 +88,43 @@
     "transcript": {
       "loadOlder": "↑ 加载更早的消息"
     }
+  },
+  "verify": {
+    "title": "验证",
+    "description": "仪表盘会在最新 git 提交的干净副本中自行重新运行项目测试。结果从不来自 agent。",
+    "button": "验证",
+    "checking": "检查中…",
+    "loading": "加载中…",
+    "empty": "尚未验证。点击“验证”运行测试。",
+    "staleNote": "此次检查之后有新的提交。请再次验证以检查最新代码。",
+    "dirtyWarning": "有未保存到 git 的更改——只检查了已保存的内容",
+    "commit": "提交",
+    "tests": "测试",
+    "exitCodes": "退出码",
+    "duration": "耗时",
+    "timedOut": "检查耗时过长，已被停止。",
+    "reason": "原因",
+    "command": "命令",
+    "log": "日志",
+    "showAll": "显示全部（{{n}} 行）",
+    "showTail": "只显示最后 {{n}} 行",
+    "noLog": "没有日志。",
+    "history": "之前的检查",
+    "testsCount": "{{n}} 个测试",
+    "openSettings": "打开设置",
+    "badge": {
+      "verified": "已验证",
+      "stale": "已验证（旧）",
+      "failed": "未通过验证",
+      "error": "验证出错",
+      "checking": "检查中…"
+    },
+    "errors": {
+      "NOT_CONFIGURED": "此项目尚未设置测试命令。",
+      "NOT_GIT": "项目文件夹不是 git 仓库，无法验证。",
+      "NO_CWD": "此会话没有项目文件夹，无法验证。",
+      "NOT_FOUND": "未找到会话。",
+      "generic": "无法开始检查：{{message}}"
+    }
   }
 }

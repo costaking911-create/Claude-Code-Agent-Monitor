@@ -88,5 +88,43 @@
       "loadOlder": "↑ Load older messages"
     }
   },
-  "remoteSourceBadgeTitle": "Collected from a remote machine"
+  "remoteSourceBadgeTitle": "Collected from a remote machine",
+  "verify": {
+    "title": "Verification",
+    "description": "The dashboard re-runs this project's tests itself, in a clean copy of the last git commit. The result never comes from the agent.",
+    "button": "Verify",
+    "checking": "Checking…",
+    "loading": "Loading…",
+    "empty": "Not verified yet. Press Verify to run the tests.",
+    "staleNote": "New commits since this check. Verify again to check the latest code.",
+    "dirtyWarning": "There are changes not saved in git – only what was saved was checked",
+    "commit": "Commit",
+    "tests": "Tests",
+    "exitCodes": "Exit code",
+    "duration": "Duration",
+    "timedOut": "The check took too long and was stopped.",
+    "reason": "Reason",
+    "command": "Command",
+    "log": "Log",
+    "showAll": "Show all ({{n}} lines)",
+    "showTail": "Show last {{n}} lines",
+    "noLog": "No log available.",
+    "history": "Earlier checks",
+    "testsCount": "{{n}} tests",
+    "openSettings": "Open settings",
+    "badge": {
+      "verified": "Verified",
+      "stale": "Verified (old)",
+      "failed": "Not verified",
+      "error": "Verification error",
+      "checking": "Checking…"
+    },
+    "errors": {
+      "NOT_CONFIGURED": "No test command is set for this project yet.",
+      "NOT_GIT": "This project folder is not a git repository, so it cannot be verified.",
+      "NO_CWD": "This session has no project folder, so it cannot be verified.",
+      "NOT_FOUND": "Session not found.",
+      "generic": "Could not start the check: {{message}}"
+    }
+  }
 }

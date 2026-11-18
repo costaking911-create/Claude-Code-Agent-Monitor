@@ -1146,6 +1146,19 @@ npm run openapi:yaml
 | `GET`  | `/api/workflows`              | Provider/source-scoped workflow data (orchestration, recorded tools, patterns, Codex compactions). Optional `?status=active\|completed`, `?sources=...`, and `?providers=claude\|codex` filters apply to all 11 data sections |
 | `GET`  | `/api/workflows/session/:id`  | Provider/source-scoped per-session drill-in (agent tree, recorded tool timeline, events) |
 
+### Verifications ("Verified")
+
+Independent verification: the dashboard re-runs the project's own commands in a clean `git archive` copy and takes the verdict from the exit code and the test count in the log, never from the agent. Commands live only in `verify.json` next to the dashboard `.env` (`DASHBOARD_VERIFY_CONFIG` overrides); requests never carry command text. One run at a time, refused below 3 GB free disk, temp copy always deleted, logs (secrets masked) under `<data dir>/verifications/`. WebSocket: `verification_updated`. Push kinds `verified` / `verify_failed` follow `DASHBOARD_PUSH_EVENTS`.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/api/sessions/:id/verify` | Queue a verification (no body) |
+| `GET` | `/api/sessions/:id/verifications` | Last 20 verifications + current HEAD (stale check) |
+| `GET` | `/api/verifications/latest?session_ids=a,b` | Latest verification per session (list badges) |
+| `GET` | `/api/verifications/:id/log` | Log text, secrets masked |
+| `GET` | `/api/verifications/config` | Per-project commands |
+| `PUT` | `/api/verifications/config` | Replace per-project commands (validated) |
+
 ### Alerts
 
 | Method   | Path                     | Description                                                            |

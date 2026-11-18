@@ -255,6 +255,7 @@ import { eventBus } from "../lib/eventBus";
 import { isRemoteDataRefreshMessage } from "../lib/remoteDataEvents";
 import { useDataScope, type ProviderScope } from "../lib/dataScope";
 import { SessionStatusBadge } from "../components/StatusBadge";
+import { VerificationBadge } from "../components/VerificationBadge";
 import { TodoProgressIndicator } from "../components/TodoProgressIndicator";
 import { EmptyState } from "../components/EmptyState";
 import { TableRowSkeleton } from "../components/Skeleton";
@@ -269,7 +270,7 @@ import {
   isSessionAwaitingInput,
   sessionAwaitingReason,
 } from "../lib/types";
-import type { Session, DashboardEvent } from "../lib/types";
+import type { Session, DashboardEvent, Verification } from "../lib/types";
 
 /** Sessions per page. */
 const PAGE_SIZE = 10;
@@ -596,6 +597,39 @@ export function Sessions() {
     return () => clearInterval(t);
   }, [loadDashboardRuns]);
 
+  // Latest independent verification per visible session ("verified" pill). Fetched once per
+  // loaded page; live changes arrive as verification_updated and are merged in place.
+  const [verifications, setVerifications] = useState<Record<string, Verification>>({});
+  const visibleIdsKey = sessions.map((s) => s.id).join(",");
+  useEffect(() => {
+    if (!visibleIdsKey) {
+      setVerifications({});
+      return;
+    }
+    let cancelled = false;
+    api.verifications
+      .latest(visibleIdsKey.split(","))
+      .then((r) => {
+        if (!cancelled) setVerifications(r.latest || {});
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [visibleIdsKey]);
+  useEffect(() => {
+    return eventBus.subscribe((msg) => {
+      if (msg.type !== "verification_updated") return;
+      const v = msg.data as Verification;
+      if (!v?.session_id) return;
+      setVerifications((prev) => {
+        const cur = prev[v.session_id];
+        if (cur && cur.id > v.id) return prev;
+        return { ...prev, [v.session_id]: v };
+      });
+    });
+  }, []);
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   // The server already paginates, so the rendered page IS the loaded list.
   const paged = sessions;
@@ -769,11 +803,14 @@ export function Sessions() {
                       <p className="min-w-0 flex-1 text-sm font-medium leading-snug text-gray-100 line-clamp-2">
                         {session.name || `${t("defaultName")}${session.id.slice(0, 8)}`}
                       </p>
-                      <SessionStatusBadge
-                        status={effectiveSessionStatus(session)}
-                        reason={sessionAwaitingReason(session)}
-                        provider={session.provider}
-                      />
+                      <div className="flex flex-shrink-0 flex-col items-end gap-1">
+                        <SessionStatusBadge
+                          status={effectiveSessionStatus(session)}
+                          reason={sessionAwaitingReason(session)}
+                          provider={session.provider}
+                        />
+                        <VerificationBadge verification={verifications[session.id]} />
+                      </div>
                     </div>
                     {session.cwd && (
                       <p className="mt-1 truncate text-xs text-accent/90">
@@ -921,6 +958,7 @@ export function Sessions() {
                             reason={sessionAwaitingReason(session)}
                             provider={session.provider}
                           />
+                          <VerificationBadge verification={verifications[session.id]} />
                           {session.todo_summary && (
                             <TodoProgressIndicator progress={session.todo_summary} />
                           )}

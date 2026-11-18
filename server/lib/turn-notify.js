@@ -7,6 +7,8 @@
  *
  * Opt-in through the environment (e.g. the desktop app's `.env`):
  *   DASHBOARD_PUSH_EVENTS=stop,waiting,error   which moments notify (default: off)
+ *     (verification results — kinds verified / verify_failed — are sent whenever any kind is
+ *      enabled, since the user asked for them; or alone with DASHBOARD_PUSH_EVENTS=verify)
  *   DASHBOARD_PUSH_LANG=he                     message language: en (default) or he
  *   DASHBOARD_PUSH_NATIVE=0                    also show a desktop notification (default 1)
  * Repeats for the same session and kind are throttled.
@@ -29,22 +31,32 @@ const TEXT = {
     stop: (p, s) => [`✅ ${p}`, `${s} finished — ready for your next message`],
     waiting: (p, s, m) => [`❓ ${p}`, `${s} is waiting for you${m ? `: ${m}` : ""}`],
     error: (p, s) => [`⛔ ${p}`, `${s} stopped with an error`],
+    verified: (p, s) => [`🟢 Verified: ${p}`, `${s} — tests re-run independently and passed`],
+    verify_failed: (p, s, m) => [`🔴 Not verified: ${p}`, `${s}${m ? ` — ${m}` : ""}`],
   },
   he: {
     stop: (p, s) => [`✅ ${p}`, `${s} – הסתיים, מחכה להודעה הבאה שלך`],
     waiting: (p, s, m) => [`❓ ${p}`, `${s} – מחכה לך${m ? `: ${m}` : ""}`],
     error: (p, s) => [`⛔ ${p}`, `${s} – נעצר עם שגיאה`],
+    verified: (p, s) => [`🟢 אומת: ${p}`, `${s} – הבדיקות רצו שוב בנפרד ועברו`],
+    verify_failed: (p, s, m) => [`🔴 לא אומת: ${p}`, `${s}${m ? ` – ${m}` : ""}`],
   },
 };
 
 /** Kinds enabled through DASHBOARD_PUSH_EVENTS. */
 function enabledKinds() {
-  return new Set(
+  const kinds = new Set(
     String(process.env.DASHBOARD_PUSH_EVENTS || "")
       .split(",")
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean)
   );
+  // A verification is started by the user, so its result notifies whenever push is on at all.
+  if (kinds.size > 0) {
+    kinds.add("verified");
+    kinds.add("verify_failed");
+  }
+  return kinds;
 }
 
 /** Project name for a working directory, folding `.claude/worktrees/<x>` into the repository. */
@@ -70,7 +82,7 @@ function clip(text, max) {
  *
  * @param {import("better-sqlite3").Database} db - Dashboard database (push subscriptions).
  * @param {{ id: string, name?: string|null, cwd?: string|null } | undefined} session - The session row.
- * @param {"stop"|"waiting"|"error"} kind - What happened.
+ * @param {"stop"|"waiting"|"error"|"verified"|"verify_failed"} kind - What happened.
  * @param {string} [detail] - Optional extra text (e.g. the permission prompt).
  * @returns {boolean} Whether a notification was dispatched.
  */
@@ -90,7 +102,7 @@ function notifyTurn(db, session, kind, detail) {
   sendPushToAll(db, title, body, {
     native,
     url: `/sessions/${encodeURIComponent(session.id)}`,
-    tag: `session-${session.id}`,
+    tag: kind.startsWith("verif") ? `verify-${session.id}` : `session-${session.id}`,
   }).catch(() => undefined);
   return true;
 }

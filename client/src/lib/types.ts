@@ -2313,7 +2313,8 @@ export interface WSMessage {
    *  → CcConfigChangedPayload;
    *  alert_triggered/alert_updated → AlertEvent; workflow_upserted → WorkflowRun;
    *  remote_source.status → RemoteSourceStatusPayload;
-   *  remote_data.updated → RemoteDataUpdatedPayload. */
+   *  remote_data.updated → RemoteDataUpdatedPayload;
+   *  verification_updated → Verification. */
   type:
     | "session_created"
     | "session_updated"
@@ -2331,7 +2332,8 @@ export interface WSMessage {
     | "alert_updated"
     | "workflow_upserted"
     | "remote_source.status"
-    | "remote_data.updated";
+    | "remote_data.updated"
+    | "verification_updated";
   /** The message body, whose concrete shape is selected by `type` above. */
   data:
     | Session
@@ -2346,7 +2348,8 @@ export interface WSMessage {
     | AlertEvent
     | WorkflowRun
     | RemoteSourceStatusPayload
-    | RemoteDataUpdatedPayload;
+    | RemoteDataUpdatedPayload
+    | Verification;
   /** ISO timestamp the server broadcast this message (not necessarily the
    *  same instant the underlying event occurred). */
   timestamp: string;
@@ -3199,3 +3202,55 @@ export const SESSION_STATUS_CONFIG: Record<
     dot: "bg-slate-400",
   },
 };
+
+// ───── Verifications ("verified" state) ─────
+
+/** One independent verification run: the server re-ran the project's test command in a clean
+ *  `git archive` copy of the session's repo and decided the verdict from exit code + test count.
+ *  Pushed live as the `verification_updated` WebSocket message. */
+export interface Verification {
+  id: number;
+  session_id: string;
+  project_dir: string;
+  /** HEAD commit that was checked; null when the repo had no commit. */
+  commit_sha: string | null;
+  /** 1 when the working tree had uncommitted changes (they were NOT checked). */
+  dirty: 0 | 1;
+  setup_cmd: string | null;
+  check_cmd: string;
+  setup_exit: number | null;
+  check_exit: number | null;
+  tests_count: number | null;
+  timed_out: 0 | 1;
+  status: "queued" | "running" | "done";
+  verdict: "verified" | "failed" | "error" | null;
+  /** Short English reason for a failed/error verdict. */
+  reason: string | null;
+  created_at: string;
+  started_at: string | null;
+  ended_at: string | null;
+}
+
+/** Response of GET /api/sessions/:id/verifications. */
+export interface VerificationsResponse {
+  /** Newest first, at most 20. */
+  verifications: Verification[];
+  /** The repo's HEAD now; a done verification on another commit is stale. */
+  current_head: string | null;
+}
+
+/** One project's verification commands, edited only in Settings. */
+export interface VerifyProject {
+  dir: string;
+  setupCmd: string;
+  checkCmd: string;
+  testCountRegex: string;
+  timeoutSec: number;
+}
+
+/** Response of GET/PUT /api/verifications/config. */
+export interface VerifyConfig {
+  /** Absolute path of the config file on the server machine. */
+  path: string;
+  projects: VerifyProject[];
+}
