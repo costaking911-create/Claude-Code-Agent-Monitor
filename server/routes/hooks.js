@@ -858,6 +858,13 @@ const processEvent = db.transaction((hookType, data, origin = null) => {
       }
       // Opt-in phone notification (DASHBOARD_PUSH_EVENTS); never blocks the hook.
       notifyTurn(dbModule.db, stoppedSession, data.stop_reason === "error" ? "error" : "stop");
+      // Independent "Verified" check a little after the turn ends (configured projects only,
+      // new commits only). Timer-based, so it never delays the hook.
+      try {
+        require("./verifications").getRunner().scheduleAuto(stoppedSession);
+      } catch {
+        /* verification is optional */
+      }
       break;
     }
 

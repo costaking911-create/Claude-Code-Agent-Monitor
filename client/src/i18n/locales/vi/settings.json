@@ -662,6 +662,8 @@
     "save": "Lưu",
     "saved": "Đã lưu",
     "saveError": "Không thể lưu: {{message}}",
-    "configPath": "Tệp cấu hình:"
+    "configPath": "Tệp cấu hình:",
+    "fieldAuto": "Tự động xác minh",
+    "fieldAutoHint": "Sau mỗi lượt kết thúc, khi có commit mới (chờ 2 phút)."
   }
 }

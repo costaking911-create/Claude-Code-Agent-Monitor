@@ -77,6 +77,11 @@ const schemas = {
         description: "Regex with one capture group for the test count.",
       },
       timeoutSec: { type: "integer", minimum: 30, maximum: 3600 },
+      autoVerify: {
+        type: "boolean",
+        default: true,
+        description: "Verify automatically two minutes after a turn ends, when the commit is new.",
+      },
     },
   },
   VerifyConfig: {

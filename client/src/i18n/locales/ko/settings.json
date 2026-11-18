@@ -662,6 +662,8 @@
     "save": "저장",
     "saved": "저장됨",
     "saveError": "저장하지 못했습니다: {{message}}",
-    "configPath": "설정 파일:"
+    "configPath": "설정 파일:",
+    "fieldAuto": "자동 검증",
+    "fieldAutoHint": "턴이 끝날 때마다 새 커밋이 있으면 검증합니다(2분 대기)."
   }
 }

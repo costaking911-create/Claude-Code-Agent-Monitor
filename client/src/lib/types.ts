@@ -3246,6 +3246,8 @@ export interface VerifyProject {
   checkCmd: string;
   testCountRegex: string;
   timeoutSec: number;
+  /** Verify automatically after a session's turn ends, when there is a new commit (default on). */
+  autoVerify?: boolean;
 }
 
 /** Response of GET/PUT /api/verifications/config. */

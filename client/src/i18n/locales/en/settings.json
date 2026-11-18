@@ -662,6 +662,8 @@
     "save": "Save",
     "saved": "Saved",
     "saveError": "Could not save: {{message}}",
-    "configPath": "Config file:"
+    "configPath": "Config file:",
+    "fieldAuto": "Verify automatically",
+    "fieldAutoHint": "After each finished turn, when there is a new commit (waits 2 minutes)."
   }
 }

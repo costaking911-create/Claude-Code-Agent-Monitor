@@ -26,6 +26,21 @@ const TMP_PREFIX = "ccam-verify-";
 const DRAIN_GRACE_MS = 5000;
 const HARD_SETTLE_MS = 10000;
 const KEEP_LOGS = 200;
+/** Marker in each temp copy naming the process that owns it (see recover()). */
+const OWNER_FILE = ".ccam-verify-owner";
+const ORPHAN_MIN_AGE_MS = 6 * 60 * 60 * 1000;
+
+/** Whether a process id is still running. */
+function isAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return Boolean(e && e.code === "EPERM");
+  }
+}
+/** Wait after a session's turn ends before auto-verifying (another turn may follow at once). */
+const AUTO_DELAY_MS = 2 * 60 * 1000;
 const SECRET_NAME = /TOKEN|SECRET|PASSWORD|PASSWD|API_?KEY|PRIVATE|VAPID|CREDENTIAL|AUTH/i;
 
 class VerifyError extends Error {
@@ -393,6 +408,7 @@ function createVerifyRunner(deps = {}) {
         return;
       }
       tmp = fs.mkdtempSync(path.join(tmpRoot, TMP_PREFIX));
+      fs.writeFileSync(path.join(tmp, OWNER_FILE), String(process.pid));
       await extract(row.commit_sha, repoDir, tmp);
       write(`# clean copy extracted (git archive)\n`);
       if (project.setupCmd) {
@@ -478,20 +494,40 @@ function createVerifyRunner(deps = {}) {
     }
   }
 
-  /** On startup: rows left queued/running by a restart become errors; stale temp copies go. */
+  /**
+   * On startup: rows left queued/running by a restart become errors, and temp copies whose owner
+   * process is gone are deleted (in the background). A copy owned by a live process — another
+   * dashboard, or a run whose own tests start a test server — is never touched.
+   */
   function recover() {
     db.prepare(
       `UPDATE verifications SET status = 'done', verdict = 'error', reason = 'dashboard restarted during verification',
          ended_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE status IN ('queued','running')`
     ).run();
-    try {
-      for (const name of fs.readdirSync(tmpRoot)) {
-        if (name.startsWith(TMP_PREFIX)) {
-          fs.rmSync(path.join(tmpRoot, name), { recursive: true, force: true, maxRetries: 2 });
-        }
+    setImmediate(() => {
+      sweepOrphans().catch(() => undefined);
+    });
+  }
+
+  async function sweepOrphans() {
+    const names = await fs.promises.readdir(tmpRoot).catch(() => []);
+    for (const name of names) {
+      if (!name.startsWith(TMP_PREFIX)) continue;
+      const dir = path.join(tmpRoot, name);
+      const owner = await fs.promises
+        .readFile(path.join(dir, OWNER_FILE), "utf8")
+        .then((t) => Number(t.trim()))
+        .catch(() => null);
+      if (owner) {
+        if (isAlive(owner)) continue;
+      } else {
+        // No marker yet (being created right now) or an old-format copy: only remove when old.
+        const st = await fs.promises.stat(dir).catch(() => null);
+        if (!st || Date.now() - st.mtimeMs < ORPHAN_MIN_AGE_MS) continue;
       }
-    } catch {
-      /* best effort */
+      await fs.promises
+        .rm(dir, { recursive: true, force: true, maxRetries: 2 })
+        .catch(() => undefined);
     }
   }
 
@@ -506,7 +542,73 @@ function createVerifyRunner(deps = {}) {
     }
   }
 
-  return { start, recover, currentHead, _idle: () => !busy && queue.length === 0 };
+  /** @type {Map<string, NodeJS.Timeout>} session id → pending auto-verification. */
+  const autoTimers = new Map();
+  const autoDelayMs = deps.autoDelayMs ?? AUTO_DELAY_MS;
+  const getSession = db.prepare("SELECT * FROM sessions WHERE id = ?");
+  const verifiedCommit = db.prepare(
+    `SELECT id FROM verifications WHERE project_dir = ? AND commit_sha = ?
+       AND (status IN ('queued','running') OR verdict IN ('verified','failed')) LIMIT 1`
+  );
+
+  /**
+   * Auto-verify a session after its turn ends: only for a configured project with autoVerify on,
+   * and only when its current commit has not been verified yet (any session, same work tree).
+   * Never throws; unconfigured projects and non-git folders are skipped silently.
+   * Resolves the queued row, or null when skipped.
+   */
+  async function autoVerifyNow(sessionId) {
+    try {
+      const session = getSession.get(sessionId);
+      if (!session) return null;
+      // Only while the session waits for the user: never in the middle of a running turn
+      // (the next turn end schedules it again).
+      if (!session.awaiting_input_since) return null;
+      const { repoDir, project } = await resolveProject(session.cwd);
+      if (project.autoVerify === false) return null;
+      // Low disk: skip quietly instead of an error + push after every turn; a manual
+      // "Verify" still reports it.
+      let free = Infinity;
+      try {
+        free = freeBytes(tmpRoot);
+      } catch {
+        free = Infinity;
+      }
+      if (free < minFreeBytes) return null;
+      const head = await git(["rev-parse", "HEAD"], repoDir);
+      const sha = head.code === 0 ? head.stdout.trim() : "";
+      if (!sha || verifiedCommit.get(repoDir, sha)) return null;
+      return await start(session);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Debounced: every new turn end of the same session restarts the wait. */
+  function scheduleAuto(session) {
+    if (!session || !session.id || !session.cwd) return;
+    clearTimeout(autoTimers.get(session.id));
+    const timer = setTimeout(() => {
+      autoTimers.delete(session.id);
+      void autoVerifyNow(session.id);
+    }, autoDelayMs);
+    if (typeof timer.unref === "function") timer.unref();
+    autoTimers.set(session.id, timer);
+    if (autoTimers.size > 500) {
+      const [oldest] = autoTimers.keys();
+      clearTimeout(autoTimers.get(oldest));
+      autoTimers.delete(oldest);
+    }
+  }
+
+  return {
+    start,
+    recover,
+    currentHead,
+    scheduleAuto,
+    autoVerifyNow,
+    _idle: () => !busy && queue.length === 0,
+  };
 }
 
 /** Row as sent to clients (no local file path). */

@@ -1138,7 +1138,7 @@ npm run openapi:yaml
 
 ### Verificaciones ("Verificado")
 
-Verificación independiente: el panel vuelve a ejecutar los comandos del propio proyecto en una copia limpia de `git archive` y toma el veredicto del código de salida y del número de pruebas en el log, nunca del agente. Los comandos viven solo en `verify.json`, junto al `.env` del panel (`DASHBOARD_VERIFY_CONFIG` lo sustituye); las peticiones nunca llevan texto de comandos. Una ejecución a la vez, se rechaza con menos de 3 GB libres, la copia temporal siempre se borra, los logs (secretos ocultos) están en `<data dir>/verifications/`. WebSocket: `verification_updated`. Los tipos de push `verified` / `verify_failed` siguen `DASHBOARD_PUSH_EVENTS`.
+Verificación independiente: el panel vuelve a ejecutar los comandos del propio proyecto en una copia limpia de `git archive` y toma el veredicto del código de salida y del número de pruebas en el log, nunca del agente. Los comandos viven solo en `verify.json`, junto al `.env` del panel (`DASHBOARD_VERIFY_CONFIG` lo sustituye); las peticiones nunca llevan texto de comandos. Una ejecución a la vez, se rechaza con menos de 3 GB libres, la copia temporal siempre se borra, los logs (secretos ocultos) están en `<data dir>/verifications/`. Verificación automática (por proyecto, activada por defecto): dos minutos después de que termine un turno de la sesión, un commit aún no verificado se verifica automáticamente. WebSocket: `verification_updated`. Los tipos de push `verified` / `verify_failed` siguen `DASHBOARD_PUSH_EVENTS`.
 
 | Método | Camino                          | Descripción                                             |
 | --- | --- | --- |

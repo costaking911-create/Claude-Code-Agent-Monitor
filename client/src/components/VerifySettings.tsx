@@ -21,6 +21,7 @@ const EMPTY_PROJECT: VerifyProject = {
   checkCmd: "",
   testCountRegex: "",
   timeoutSec: 600,
+  autoVerify: true,
 };
 
 /**
@@ -87,6 +88,7 @@ export function VerifySettings() {
           checkCmd: p.checkCmd.trim(),
           testCountRegex: p.testCountRegex.trim(),
           timeoutSec: Number(p.timeoutSec) || 0,
+          autoVerify: p.autoVerify !== false,
         }))
       );
       setProjects(cfg.projects || []);
@@ -190,6 +192,20 @@ export function VerifySettings() {
                         onChange={(e) => update(i, { timeoutSec: Number(e.target.value) })}
                         className={inputClass}
                       />
+                    </label>
+                    <label className="flex items-start gap-3 min-h-[44px] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={p.autoVerify !== false}
+                        onChange={(e) => update(i, { autoVerify: e.target.checked })}
+                        className="mt-1 h-5 w-5 shrink-0 accent-accent"
+                      />
+                      <span>
+                        <span className="block text-xs text-gray-200">{t("verify.fieldAuto")}</span>
+                        <span className="block text-[11px] text-gray-500">
+                          {t("verify.fieldAutoHint")}
+                        </span>
+                      </span>
                     </label>
                   </div>
                 </div>

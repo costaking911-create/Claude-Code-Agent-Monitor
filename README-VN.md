@@ -1129,7 +1129,7 @@ Tài liệu API hiện đã **đầy đủ**: mọi route phụ trợ đều đ�
 
 ### Verifications ("Đã xác minh")
 
-Xác minh độc lập: dashboard chạy lại các lệnh của chính dự án trong một bản sao `git archive` sạch và lấy kết luận từ mã thoát và số lượng test trong log, không bao giờ từ agent. Lệnh chỉ nằm trong `verify.json` cạnh `.env` của dashboard (`DASHBOARD_VERIFY_CONFIG` để ghi đè); request không bao giờ chứa nội dung lệnh. Mỗi lần một lượt, từ chối khi ổ đĩa còn dưới 3 GB, bản sao tạm luôn bị xóa, log (đã che bí mật) nằm trong `<data dir>/verifications/`. WebSocket: `verification_updated`. Loại push `verified` / `verify_failed` theo `DASHBOARD_PUSH_EVENTS`.
+Xác minh độc lập: dashboard chạy lại các lệnh của chính dự án trong một bản sao `git archive` sạch và lấy kết luận từ mã thoát và số lượng test trong log, không bao giờ từ agent. Lệnh chỉ nằm trong `verify.json` cạnh `.env` của dashboard (`DASHBOARD_VERIFY_CONFIG` để ghi đè); request không bao giờ chứa nội dung lệnh. Mỗi lần một lượt, từ chối khi ổ đĩa còn dưới 3 GB, bản sao tạm luôn bị xóa, log (đã che bí mật) nằm trong `<data dir>/verifications/`. Tự động xác minh (theo dự án, bật mặc định): hai phút sau khi một lượt của phiên kết thúc, commit chưa được xác minh sẽ được xác minh tự động. WebSocket: `verification_updated`. Loại push `verified` / `verify_failed` theo `DASHBOARD_PUSH_EVENTS`.
 
 | Phương pháp | Con đường                          | Sự miêu tả                                             |
 | --- | --- | --- |

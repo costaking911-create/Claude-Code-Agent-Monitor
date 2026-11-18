@@ -1071,7 +1071,7 @@ POST /api/sessions/:id/verify            # body must be empty → 202 { verifica
 GET  /api/sessions/:id/verifications     # { verifications: [...20 newest], current_head }
 GET  /api/verifications/latest?session_ids=a,b   # { latest: { <sessionId>: Verification } }
 GET  /api/verifications/:id/log          # text/plain, last 5 MB
-GET  /api/verifications/config           # { path, projects: [{ dir, setupCmd, checkCmd, testCountRegex, timeoutSec }] }
+GET  /api/verifications/config           # { path, projects: [{ dir, setupCmd, checkCmd, testCountRegex, timeoutSec, autoVerify }] }
 PUT  /api/verifications/config           # same body; 400 { error: { code: "INVALID", message, field } }
 ```
 
@@ -1079,7 +1079,7 @@ Errors from `POST …/verify`: `404 NOT_FOUND`, `409 NO_CWD | NOT_GIT | NOT_CONF
 (a body was sent), `403 EBADORIGIN`. A second request while one is queued/running returns the active
 row. Verdicts: `verified` (exit 0 and test count > 0), `failed` (non-zero exit, timeout, setup
 failure, no count found, or 0 tests), `error` (low disk, extraction failure, dashboard restarted).
-WebSocket message `verification_updated` carries the row on every status change. Push kinds
+Auto-verify: two minutes after a session's `Stop` hook (debounced per session), a project with `autoVerify` (default `true`) is verified when its current commit has no queued/running/verified/failed verification yet. WebSocket message `verification_updated` carries the row on every status change. Push kinds
 `verified` / `verify_failed` are sent whenever `DASHBOARD_PUSH_EVENTS` enables any kind.
 
 ### Webhooks

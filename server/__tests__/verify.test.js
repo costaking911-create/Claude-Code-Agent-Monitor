@@ -275,6 +275,110 @@ describe("verify runner", () => {
   });
 });
 
+describe("auto-verify after a turn ends", () => {
+  const idleSession = () => {
+    const s = newSession();
+    stmts.setSessionAwaitingInput.run(new Date().toISOString(), "stop", s.id);
+    return stmts.getSession.get(s.id);
+  };
+  const ok = {
+    setup: { code: 0, timedOut: false, output: "" },
+    check: { code: 0, timedOut: false, output: "# pass 2\n" },
+  };
+  const gitAt = (sha) => async (args) => {
+    if (args[1] === "HEAD") return { code: 0, stdout: `${sha}\n` };
+    return fakeGit(args);
+  };
+
+  it("verifies a new commit, then skips the same commit for any session", async () => {
+    const { runner } = makeRunner(ok, { git: gitAt("auto111") });
+    const first = await runner.autoVerifyNow(idleSession().id);
+    assert.ok(first, "a new commit is verified");
+    const done = await waitDone(runner, first.id);
+    assert.equal(done.verdict, "verified");
+    assert.equal(await runner.autoVerifyNow(idleSession().id), null, "same commit is not re-run");
+  });
+
+  it("skips quietly on low disk, and retries a commit whose earlier run only errored", async () => {
+    const low = makeRunner(ok, { git: gitAt("auto222"), freeBytes: () => 0 });
+    assert.equal(await low.runner.autoVerifyNow(idleSession().id), null, "no row, no push");
+    const s = idleSession();
+    db.prepare(
+      "INSERT INTO verifications (session_id, project_dir, commit_sha, check_cmd, status, verdict) VALUES (?, ?, 'auto222', 'x', 'done', 'error')"
+    ).run(s.id, REPO);
+    const { runner } = makeRunner(ok, { git: gitAt("auto222") });
+    const r = await runner.autoVerifyNow(s.id);
+    assert.ok(r, "an errored run does not block a retry");
+    await waitDone(runner, r.id);
+  });
+
+  it("does not start while the session is in the middle of a turn", async () => {
+    const { runner } = makeRunner(ok, { git: gitAt("auto555") });
+    assert.equal(await runner.autoVerifyNow(newSession().id), null);
+  });
+
+  it("skips projects with autoVerify off and unconfigured projects, without throwing", async () => {
+    const off = makeRunner(ok, {
+      git: gitAt("auto333"),
+      getConfig: () => ({
+        projects: [
+          {
+            dir: REPO,
+            checkCmd: "check",
+            testCountRegex: "# pass (\d+)",
+            timeoutSec: 60,
+            autoVerify: false,
+          },
+        ],
+      }),
+    });
+    assert.equal(await off.runner.autoVerifyNow(idleSession().id), null);
+    const none = makeRunner(ok, { git: gitAt("auto333"), getConfig: () => ({ projects: [] }) });
+    assert.equal(await none.runner.autoVerifyNow(idleSession().id), null);
+  });
+
+  it("scheduleAuto waits, and a new turn end restarts the wait", async () => {
+    const { runner } = makeRunner(ok, { git: gitAt("auto444"), autoDelayMs: 150 });
+    const s = idleSession();
+    runner.scheduleAuto(s);
+    await new Promise((r) => setTimeout(r, 80));
+    runner.scheduleAuto(s);
+    await new Promise((r) => setTimeout(r, 100));
+    const count = () =>
+      db.prepare("SELECT COUNT(*) AS n FROM verifications WHERE session_id = ?").get(s.id).n;
+    assert.equal(count(), 0, "still waiting after the restart");
+    await new Promise((r) => setTimeout(r, 200));
+    for (let i = 0; i < 100 && !runner._idle(); i++) await new Promise((r) => setTimeout(r, 10));
+    assert.equal(count(), 1);
+  });
+
+  it("keeps the autoVerify flag (default on) in verify.json", () => {
+    const cfg = verifyConfig.validateConfig({
+      projects: [
+        { dir: REPO, checkCmd: "x" },
+        { dir: TMP, checkCmd: "x", autoVerify: false },
+      ],
+    });
+    assert.equal(cfg.projects[0].autoVerify, true);
+    assert.equal(cfg.projects[1].autoVerify, false);
+  });
+
+  it("startup sweep removes only temp copies whose owner process is gone", async () => {
+    const live = fs.mkdtempSync(path.join(WORK_ROOT, "ccam-verify-"));
+    fs.writeFileSync(path.join(live, ".ccam-verify-owner"), String(process.pid));
+    const dead = fs.mkdtempSync(path.join(WORK_ROOT, "ccam-verify-"));
+    fs.writeFileSync(path.join(dead, ".ccam-verify-owner"), "999999");
+    const fresh = fs.mkdtempSync(path.join(WORK_ROOT, "ccam-verify-"));
+    const { runner } = makeRunner(ok);
+    runner.recover();
+    for (let i = 0; i < 100 && fs.existsSync(dead); i++)
+      await new Promise((r) => setTimeout(r, 20));
+    assert.equal(fs.existsSync(dead), false, "dead owner removed");
+    assert.equal(fs.existsSync(live), true, "live owner kept");
+    assert.equal(fs.existsSync(fresh), true, "unmarked recent copy kept");
+  });
+});
+
 describe("verification routes", () => {
   it("refuses a body (commands never come from the request)", async () => {
     const s = newSession();

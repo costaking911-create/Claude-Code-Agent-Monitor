@@ -92,7 +92,9 @@ function validateProject(p, i) {
   let timeoutSec = Number(p.timeoutSec ?? DEFAULT_TIMEOUT);
   if (!Number.isFinite(timeoutSec)) timeoutSec = DEFAULT_TIMEOUT;
   timeoutSec = Math.min(MAX_TIMEOUT, Math.max(MIN_TIMEOUT, Math.round(timeoutSec)));
-  return { dir: path.resolve(dir), setupCmd, checkCmd, testCountRegex, timeoutSec };
+  // Verify automatically after a session's turn ends (on a new commit). On unless set to false.
+  const autoVerify = p.autoVerify !== false;
+  return { dir: path.resolve(dir), setupCmd, checkCmd, testCountRegex, timeoutSec, autoVerify };
 }
 
 /** Validate a whole config body ({ projects: [...] }). Throws ConfigError. */

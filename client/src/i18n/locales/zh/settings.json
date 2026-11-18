@@ -662,6 +662,8 @@
     "save": "保存",
     "saved": "已保存",
     "saveError": "无法保存：{{message}}",
-    "configPath": "配置文件："
+    "configPath": "配置文件：",
+    "fieldAuto": "自动验证",
+    "fieldAutoHint": "每轮结束后，如有新提交则验证（等待 2 分钟）。"
   }
 }

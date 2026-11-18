@@ -662,6 +662,8 @@
     "save": "Guardar",
     "saved": "Guardado",
     "saveError": "No se pudo guardar: {{message}}",
-    "configPath": "Archivo de configuración:"
+    "configPath": "Archivo de configuración:",
+    "fieldAuto": "Verificar automáticamente",
+    "fieldAutoHint": "Tras cada turno terminado, cuando hay un commit nuevo (espera 2 minutos)."
   }
 }
