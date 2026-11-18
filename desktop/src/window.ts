@@ -333,6 +333,28 @@ export function createDashboardWindow(targetUrl: string): BrowserWindow {
     }
   });
 
-  win.loadURL(targetUrl).catch((err) => log.error("failed to load dashboard URL", err));
+  win
+    .loadURL(dashboardLoadUrl(targetUrl))
+    .catch((err) => log.error("failed to load dashboard URL", err));
   return win;
+}
+
+/**
+ * The URL to load in the dashboard window. When the server requires DASHBOARD_TOKEN (loaded from
+ * the app's `.env` into this process), hand it to the page through the one-time `?token=` pairing
+ * link, which the client stores and strips from the address bar. Without this the desktop window
+ * shows "not connected" whenever its stored token is missing or outdated.
+ *
+ * @param baseUrl The embedded server's origin.
+ */
+export function dashboardLoadUrl(baseUrl: string): string {
+  const token = process.env.DASHBOARD_TOKEN;
+  if (!token) return baseUrl;
+  try {
+    const u = new URL(baseUrl);
+    u.searchParams.set("token", token);
+    return u.toString();
+  } catch {
+    return baseUrl;
+  }
 }

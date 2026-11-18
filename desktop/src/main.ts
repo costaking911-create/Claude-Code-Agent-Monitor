@@ -199,7 +199,7 @@ import {
 } from "./server-host";
 import { ensureUserPath } from "./shell-path";
 import { createTray } from "./tray";
-import { appIconPath, createDashboardWindow } from "./window";
+import { appIconPath, createDashboardWindow, dashboardLoadUrl } from "./window";
 
 /** Single mutable record of process-wide state, held in the module-level
  * `state` singleton below rather than passed around — this main-process
@@ -324,7 +324,7 @@ async function restartServer(): Promise<void> {
   state.serverHandle = await startEmbeddedServer();
   if (state.win && !state.win.isDestroyed()) {
     state.win
-      .loadURL(state.serverHandle.url)
+      .loadURL(dashboardLoadUrl(state.serverHandle.url))
       .catch((err) => log.error("reload after restart failed", err));
   }
   new Notification({ title: APP_NAME, body: "Server restarted." }).show();
