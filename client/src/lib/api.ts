@@ -1826,7 +1826,7 @@ export const api = {
 
   // ───────────────────────────── Verifications API ────────────────────────────
   /** Independent "verified" checks: the server re-runs a project's test command in a clean
-   *  `git archive` copy and decides the verdict from exit code + test count, never from the
+   *  clean git copy (tracked files only) and decides the verdict from exit code + test count, never from the
    *  agent. Config (which projects and commands) is edited only from Settings. */
   verifications: {
     /** POST /api/sessions/:id/verify - queue a new verification (202). Rejects with an

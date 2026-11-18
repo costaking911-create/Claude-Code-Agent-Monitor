@@ -618,7 +618,7 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_workflows_status ON workflows(status);
 
   -- Independent verification ("Verified") of a session's work: the dashboard
-  -- re-runs the project's own configured commands in a clean git-archive copy
+  -- re-runs the project's own configured commands in a clean copy of the commit
   -- and takes the verdict from the exit code + the test count in the log,
   -- never from the agent. status: queued | running | done; verdict:
   -- verified | failed | error (NULL until done). Open strings, no CHECK.

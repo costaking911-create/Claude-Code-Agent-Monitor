@@ -3206,7 +3206,7 @@ export const SESSION_STATUS_CONFIG: Record<
 // ───── Verifications ("verified" state) ─────
 
 /** One independent verification run: the server re-ran the project's test command in a clean
- *  `git archive` copy of the session's repo and decided the verdict from exit code + test count.
+ *  clean git copy (tracked files only) of the session's repo and decided the verdict from exit code + test count.
  *  Pushed live as the `verification_updated` WebSocket message. */
 export interface Verification {
   id: number;

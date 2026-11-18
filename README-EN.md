@@ -1148,7 +1148,7 @@ npm run openapi:yaml
 
 ### Verifications ("Verified")
 
-Independent verification: the dashboard re-runs the project's own commands in a clean `git archive` copy and takes the verdict from the exit code and the test count in the log, never from the agent. Commands live only in `verify.json` next to the dashboard `.env` (`DASHBOARD_VERIFY_CONFIG` overrides); requests never carry command text. One run at a time, refused below 3 GB free disk, temp copy always deleted, logs (secrets masked) under `<data dir>/verifications/`. Auto-verify (per project, on by default): two minutes after a session's turn ends, a commit that has not been verified yet is verified automatically. WebSocket: `verification_updated`. Push kinds `verified` / `verify_failed` follow `DASHBOARD_PUSH_EVENTS`.
+Independent verification: the dashboard re-runs the project's own commands in a clean git (`read-tree` + `checkout-index`) copy and takes the verdict from the exit code and the test count in the log, never from the agent. Commands live only in `verify.json` next to the dashboard `.env` (`DASHBOARD_VERIFY_CONFIG` overrides); requests never carry command text. One run at a time, refused below 3 GB free disk, temp copy always deleted, logs (secrets masked) under `<data dir>/verifications/`. Auto-verify (per project, on by default): two minutes after a session's turn ends, a commit that has not been verified yet is verified automatically. WebSocket: `verification_updated`. Push kinds `verified` / `verify_failed` follow `DASHBOARD_PUSH_EVENTS`.
 
 | Method | Path | Description |
 | --- | --- | --- |

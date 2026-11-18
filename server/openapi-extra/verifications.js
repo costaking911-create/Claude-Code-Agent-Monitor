@@ -10,7 +10,7 @@ const tags = [
   {
     name: "Verifications",
     description:
-      "Independent verification of a session's work: the dashboard re-runs the project's configured commands in a clean git-archive copy and decides from the exit code and the test count in the log, never from the agent.",
+      "Independent verification of a session's work: the dashboard re-runs the project's configured commands in a clean copy of the commit and decides from the exit code and the test count in the log, never from the agent.",
   },
 ];
 

@@ -1,7 +1,7 @@
 /**
  * @file VerifyPanel.tsx
  * @description SessionDetail panel for the independent "verified" check. The "Verify" button asks
- * the server to re-run the project's test command in a clean `git archive` copy of the session's
+ * the server to re-run the project's test command in a clean git copy (tracked files only) of the session's
  * repo; the verdict comes from the exit code and the test count in the log, never from the agent.
  * Shows the latest verdict, checked commit, uncommitted-changes warning, test count, exit codes,
  * duration, reason, a log tail with "show all", and a short history. Live via the

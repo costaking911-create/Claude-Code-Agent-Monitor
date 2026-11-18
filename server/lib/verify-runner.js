@@ -1,7 +1,7 @@
 /**
  * @file verify-runner.js
  * @description Independent verification of a session's work ("Verified"). For the session's git
- * repository it takes the current commit, extracts it with `git archive` into a fresh temp folder
+ * repository it takes the current commit, extracts it (git read-tree + checkout-index through a throwaway index) into a fresh temp folder
  * (tracked files only: no history, no transcript, no local secrets), runs the project's configured
  * setup and check commands there with a timeout, writes all output to a log with secrets masked,
  * and decides the verdict from the check's exit code and the test count parsed from that log —
@@ -140,35 +140,56 @@ function defaultGit(args, cwd) {
   });
 }
 
-/** Default extractor: `git archive --format=tar <sha> | tar -x -f - -C <dest>`, no shell. */
-function defaultExtract(sha, repoDir, dest) {
-  return new Promise((resolve, reject) => {
-    const tarBin =
-      process.platform === "win32"
-        ? path.join(process.env.SystemRoot || "C:\\Windows", "System32", "tar.exe")
-        : "tar";
-    const git = spawn("git", ["archive", "--format=tar", sha], {
-      cwd: repoDir,
-      env: gitSafeEnv(),
-      windowsHide: true,
-    });
-    const tar = spawn(tarBin, ["-x", "-f", "-", "-C", dest], { windowsHide: true });
-    let err = "";
-    git.stderr.on("data", (d) => (err += d));
-    tar.stderr.on("data", (d) => (err += d));
-    git.stdout.pipe(tar.stdin);
-    git.on("error", reject);
-    tar.on("error", reject);
-    let gitCode = null;
-    git.on("close", (c) => (gitCode = c));
-    tar.on("close", (c) => {
-      if (c === 0 && gitCode === 0) resolve();
-      else
-        reject(
-          new Error(`git archive failed: ${err.trim().slice(0, 300) || `exit ${gitCode}/${c}`}`)
-        );
-    });
+/** Run git with extra environment; resolves { code, stderr }. */
+function runGitEnv(args, cwd, extraEnv) {
+  return new Promise((resolve) => {
+    execFile(
+      "git",
+      args,
+      {
+        cwd,
+        env: { ...gitSafeEnv(), ...extraEnv },
+        windowsHide: true,
+        maxBuffer: 16 * 1024 * 1024,
+      },
+      (err, _stdout, stderr) =>
+        resolve({ code: err ? (typeof err.code === "number" ? err.code : 1) : 0, stderr })
+    );
   });
+}
+
+/**
+ * Default extractor: write the commit's tracked files into `dest` through a throwaway index
+ * (`read-tree` + `checkout-index`), so the real repository's index, HEAD and working tree are
+ * never touched. Unlike `git archive | tar`, this handles non-ASCII (e.g. Hebrew) file names on
+ * Windows, and symlinks become small text files when the OS cannot create them.
+ */
+async function defaultExtract(sha, repoDir, dest) {
+  const index = `${dest}.index`;
+  const env = { GIT_INDEX_FILE: index };
+  try {
+    const read = await runGitEnv(["read-tree", sha], repoDir, env);
+    if (read.code !== 0) throw new Error(`git read-tree failed: ${String(read.stderr).trim()}`);
+    const out = await runGitEnv(
+      [
+        "-c",
+        "core.symlinks=false",
+        "-c",
+        "core.longpaths=true",
+        `--work-tree=${dest}`,
+        "checkout-index",
+        "--all",
+        "--force",
+      ],
+      repoDir,
+      env
+    );
+    if (out.code !== 0) {
+      throw new Error(`git checkout-index failed: ${String(out.stderr).trim().slice(0, 300)}`);
+    }
+  } finally {
+    fs.rmSync(index, { force: true });
+  }
 }
 
 /**
@@ -410,7 +431,7 @@ function createVerifyRunner(deps = {}) {
       tmp = fs.mkdtempSync(path.join(tmpRoot, TMP_PREFIX));
       fs.writeFileSync(path.join(tmp, OWNER_FILE), String(process.pid));
       await extract(row.commit_sha, repoDir, tmp);
-      write(`# clean copy extracted (git archive)\n`);
+      write(`# clean copy extracted from git (tracked files only)\n`);
       if (project.setupCmd) {
         write(`\n$ ${project.setupCmd}\n`);
         const r = await runShell(project.setupCmd, tmp, left());

@@ -1144,7 +1144,7 @@ npm run openapi:yaml
 
 ### Verifications ("검증됨")
 
-독립 검증: 대시보드가 깨끗한 `git archive` 사본에서 프로젝트 자체 명령을 다시 실행하고, 판정은 종료 코드와 로그의 테스트 수로만 내리며 agent의 말은 절대 쓰지 않습니다. 명령은 대시보드 `.env` 옆의 `verify.json`에만 있습니다(`DASHBOARD_VERIFY_CONFIG`로 재정의). 요청에는 명령 텍스트가 절대 포함되지 않습니다. 한 번에 하나만 실행하고, 여유 디스크가 3 GB 미만이면 거부하며, 임시 사본은 항상 삭제되고, 로그(비밀 가림)는 `<data dir>/verifications/`에 있습니다. 자동 검증(프로젝트별, 기본 켜짐): 세션의 턴이 끝나고 2분 뒤, 아직 검증되지 않은 커밋을 자동으로 검증합니다. WebSocket: `verification_updated`. 푸시 종류 `verified` / `verify_failed`는 `DASHBOARD_PUSH_EVENTS`를 따릅니다.
+독립 검증: 대시보드가 깨끗한 git (`read-tree` + `checkout-index`) 사본에서 프로젝트 자체 명령을 다시 실행하고, 판정은 종료 코드와 로그의 테스트 수로만 내리며 agent의 말은 절대 쓰지 않습니다. 명령은 대시보드 `.env` 옆의 `verify.json`에만 있습니다(`DASHBOARD_VERIFY_CONFIG`로 재정의). 요청에는 명령 텍스트가 절대 포함되지 않습니다. 한 번에 하나만 실행하고, 여유 디스크가 3 GB 미만이면 거부하며, 임시 사본은 항상 삭제되고, 로그(비밀 가림)는 `<data dir>/verifications/`에 있습니다. 자동 검증(프로젝트별, 기본 켜짐): 세션의 턴이 끝나고 2분 뒤, 아직 검증되지 않은 커밋을 자동으로 검증합니다. WebSocket: `verification_updated`. 푸시 종류 `verified` / `verify_failed`는 `DASHBOARD_PUSH_EVENTS`를 따릅니다.
 
 | 메서드 | 경로                          | 설명                                                    |
 | --- | --- | --- |

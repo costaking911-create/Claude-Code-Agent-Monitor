@@ -609,7 +609,7 @@ are reserved for the blind reviewer (later phase). Cascades with its session.
 | `session_id` | TEXT | FK → `sessions.id` (ON DELETE CASCADE) |
 | `workflow_run_id` | TEXT | Optional Workflow run (later phase) |
 | `project_dir` | TEXT | Git work tree that was verified |
-| `commit_sha` | TEXT | Commit extracted with `git archive` |
+| `commit_sha` | TEXT | Commit whose tracked files were copied out (throwaway index) |
 | `dirty` | INTEGER | 1 when uncommitted changes existed (not included) |
 | `requirements` | TEXT | Reserved for the blind reviewer |
 | `setup_cmd` / `check_cmd` | TEXT | Copies of the commands that ran (from `verify.json`) |

@@ -1058,7 +1058,7 @@ curl http://localhost:4820/api/sessions/sess_abc123/notifications
 ### Verifications
 
 Independent verification ("Verified"): the server re-runs the project's own configured commands in a
-clean `git archive` copy of the session's repository and takes the verdict only from the check
+clean copy of the commit of the session's repository and takes the verdict only from the check
 command's exit code and the test count parsed from the log (`testCountRegex`, one capture group).
 Commands live only in `verify.json` next to the dashboard `.env` (override with
 `DASHBOARD_VERIFY_CONFIG`); no request ever carries command text. One run at a time; a run is
