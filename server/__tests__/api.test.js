@@ -190,6 +190,7 @@ describe("GET /api/health", () => {
     assert.equal(res.body.status, "ok");
     assert.equal(res.body.version, pkg.version);
     assert.ok(res.body.timestamp);
+    assert.ok(res.body.features.includes("queue_sync"));
   });
 });
 

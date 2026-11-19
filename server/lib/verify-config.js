@@ -187,7 +187,23 @@ function validateConfig(body) {
     if (seen.has(k)) throw new ConfigError("duplicate dir", `projects[${i}].dir`);
     seen.add(k);
   });
-  return { projects };
+  const out = { projects };
+  const queueFile = validateQueueFile(body.queueFile);
+  if (queueFile) out.queueFile = queueFile;
+  return out;
+}
+
+/**
+ * The owner's task queue (Markdown table) whose 🔎 rows are flipped when their commit is
+ * verified (server/lib/queue-sync.js). Absolute path to a .md file, or empty for none.
+ */
+function validateQueueFile(v) {
+  if (v == null || v === "") return null;
+  const s = String(v).trim();
+  if (!s) return null;
+  if (s.length > 500 || /[\r\n\0]/.test(s) || !path.isAbsolute(s) || !/\.md$/i.test(s))
+    throw new ConfigError("queueFile must be an absolute path to a .md file", "queueFile");
+  return path.resolve(s);
 }
 
 /** Read the config; a missing or broken file reads as no projects. */
@@ -203,7 +219,14 @@ function readConfig() {
         /* skip an entry that no longer validates (e.g. folder deleted) */
       }
     });
-    return { projects };
+    const out = { projects };
+    try {
+      const queueFile = validateQueueFile(raw && raw.queueFile);
+      if (queueFile) out.queueFile = queueFile;
+    } catch {
+      /* ignore a broken queueFile */
+    }
+    return out;
   } catch {
     return { projects: [] };
   }
@@ -212,6 +235,11 @@ function readConfig() {
 /** Validate and atomically write the config. Returns the stored config. */
 function writeConfig(body) {
   const cfg = validateConfig(body);
+  // The settings screen sends only the projects: keep the queue file it does not know about.
+  if (!body || !Object.prototype.hasOwnProperty.call(body, "queueFile")) {
+    const kept = readConfig().queueFile;
+    if (kept) cfg.queueFile = kept;
+  }
   const file = configPath();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const tmp = `${file}.${process.pid}.tmp`;

@@ -1121,6 +1121,16 @@ turns the verdict into `failed` (`reason` starts with `blind review:`); a review
 `verified`. Rows carry `review_verdict` and `review` (the parsed answer or `{ error }`).
 `DASHBOARD_CLAUDE_BIN` overrides the CLI path.
 
+Task queue link (`server/lib/queue-sync.js`): `"queueFile": "C:/path/to/queue.md"` at the top
+level of `verify.json` (absolute `.md` path; kept when the settings screen saves only the
+projects; `""` clears it). The queue is a Markdown table `| # | project | task | status | added |
+result |`. When a verification ends with `verified` or `failed`, every row whose status cell is
+exactly `🔎` and whose result cell contains the commit's 7-character sha becomes `✅` (`· אומת ✔`
+appended) or `⛔` (`· האימות נכשל: <reason>` appended). An `error` verdict leaves the row
+waiting. Other lines are kept byte for byte; the write is atomic. `GET /api/health` returns
+`features` (`verify`, `visual_check`, `blind_review`, `queue_sync`, `disk_janitor`) without a
+token, so an agent can check before marking a row `🔎`.
+
 ### Disk cleanup
 
 Automatic disk cleanup (`server/lib/disk-janitor.js`). Every 10 minutes the server checks free space

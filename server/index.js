@@ -147,7 +147,14 @@ function createApp() {
   });
 
   app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok", version: APP_VERSION, timestamp: new Date().toISOString() });
+    // `features` lets agents check for a capability without a token (e.g. "queue_sync": a 🔎
+    // row in the task queue is flipped by the dashboard once its commit is verified).
+    res.json({
+      status: "ok",
+      version: APP_VERSION,
+      timestamp: new Date().toISOString(),
+      features: ["verify", "visual_check", "blind_review", "queue_sync", "disk_janitor"],
+    });
   });
 
   // Keep async API failures machine-readable without exposing SQL or stacks.

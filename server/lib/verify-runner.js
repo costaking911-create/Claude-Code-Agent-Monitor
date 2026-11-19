@@ -293,6 +293,7 @@ function createVerifyRunner(deps = {}) {
   const db = deps.db;
   const broadcast = deps.broadcast || (() => {});
   const notify = deps.notify || (() => {});
+  const onFinished = deps.onFinished || (() => {});
   const git = deps.git || defaultGit;
   const extract = deps.extract || defaultExtract;
   const runShell = deps.runShell || defaultRunShell;
@@ -580,6 +581,11 @@ function createVerifyRunner(deps = {}) {
         notify(session, verdict === "verified" ? "verified" : "verify_failed", reason || "");
       } catch {
         /* never fail a verification on a push */
+      }
+      try {
+        onFinished(stmt.get.get(row.id));
+      } catch {
+        /* e.g. the task queue could not be updated */
       }
     }
   }

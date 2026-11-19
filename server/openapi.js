@@ -502,6 +502,12 @@ function createOpenApiSpec() {
               example: "2.4.6",
             },
             timestamp: { type: "string", format: "date-time" },
+            features: {
+              type: "array",
+              items: { type: "string" },
+              description:
+                "Capabilities of this build (e.g. queue_sync), readable without a token by agents.",
+            },
           },
         },
         SessionsListResponse: {

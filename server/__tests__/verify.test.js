@@ -215,6 +215,22 @@ describe("verify runner", () => {
     assert.deepEqual(calls.notified[0], ["verified", ""]);
   });
 
+  it("tells onFinished about the finished row (the task queue is updated from there)", async () => {
+    const finished = [];
+    const { runner } = makeRunner(
+      {
+        setup: { code: 0, timedOut: false, output: "" },
+        check: { code: 0, timedOut: false, output: "# pass 2\n" },
+      },
+      { onFinished: (row) => finished.push(row) }
+    );
+    const row = await runner.start(newSession());
+    await waitDone(runner, row.id);
+    assert.equal(finished.length, 1);
+    assert.equal(finished[0].verdict, "verified");
+    assert.equal(finished[0].commit_sha, "abc123");
+  });
+
   it("fails on a non-zero exit even if the output claims success", async () => {
     const { runner, calls } = makeRunner({
       setup: { code: 0, timedOut: false, output: "" },

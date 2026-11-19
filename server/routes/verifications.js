@@ -19,6 +19,7 @@ const { broadcast } = require("../websocket");
 const { getDataDir } = require("../lib/claude-home");
 const { notifyTurn } = require("../lib/turn-notify");
 const verifyConfig = require("../lib/verify-config");
+const { markQueue } = require("../lib/queue-sync");
 const {
   createVerifyRunner,
   publicRow,
@@ -37,6 +38,18 @@ function getRunner() {
       db,
       broadcast,
       notify: (session, kind, detail) => notifyTurn(db, session, kind, detail),
+      // A task waiting for verification in the owner's queue (🔎) becomes ✅ or ⛔.
+      onFinished: (row) => {
+        const queueFile = verifyConfig.readConfig().queueFile;
+        if (queueFile && row) {
+          markQueue({
+            file: queueFile,
+            commitSha: row.commit_sha,
+            verdict: row.verdict,
+            reason: row.reason,
+          });
+        }
+      },
       logDir: path.join(getDataDir(), "verifications"),
     });
     runner.recover();
