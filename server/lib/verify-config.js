@@ -104,6 +104,8 @@ function validateProject(p, i) {
   };
   const visual = validateVisual(p.visual, field("visual"));
   if (visual) out.visual = visual;
+  const blindReview = validateBlindReview(p.blindReview, field("blindReview"));
+  if (blindReview) out.blindReview = blindReview;
   return out;
 }
 
@@ -111,6 +113,28 @@ const clampNum = (v, min, max, dflt) => {
   const n = Number(v);
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dflt;
 };
+
+/**
+ * Optional blind reviewer (server/lib/blind-review.js): a read-only `claude -p` that sees only
+ * the owner's requests and the clean copy. `null`/`false`/missing = off. Throws ConfigError.
+ * @param {any} v
+ * @param {string} f - Error field prefix.
+ */
+function validateBlindReview(v, f) {
+  if (v == null || v === false) return null;
+  if (v === true) v = {};
+  if (typeof v !== "object" || Array.isArray(v))
+    throw new ConfigError("blindReview must be an object", f);
+  // Switched off in the settings screen: keep its model/timeout for when it is switched on again.
+  const enabled = v.enabled !== false;
+  const model = v.model == null || v.model === "" ? "sonnet" : String(v.model).trim();
+  // Passed to the CLI as one argument (no shell); a plain model name that cannot look like a flag.
+  if (!/^[A-Za-z][A-Za-z0-9._:[\]-]{0,79}$/.test(model))
+    throw new ConfigError("model is invalid", `${f}.model`);
+  const out = { model, timeoutSec: Math.round(clampNum(v.timeoutSec, 60, 1800, 600)) };
+  if (!enabled) out.enabled = false;
+  return out;
+}
 
 /**
  * Optional visual check (server/lib/visual-check.js): open the app at phone size after the tests

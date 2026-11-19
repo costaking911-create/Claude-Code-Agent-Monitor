@@ -127,6 +127,22 @@
       "NO_CWD": "Phiên này không có thư mục dự án nên không thể xác minh.",
       "NOT_FOUND": "Không tìm thấy phiên.",
       "generic": "Không thể bắt đầu kiểm tra: {{message}}"
+    },
+    "review": {
+      "title": "Người duyệt mù",
+      "couldNotRun": "Không chạy được:",
+      "verdict": {
+        "SHIP": "Đã làm đủ",
+        "SHIP_WITH_FIXES": "Đã làm, còn thiếu nhỏ",
+        "DONT_SHIP": "Chưa làm",
+        "error": "Không chạy"
+      },
+      "status": {
+        "done": "Đã làm",
+        "partial": "Làm một phần",
+        "missing": "Thiếu",
+        "n/a": "Không liên quan"
+      }
     }
   }
 }

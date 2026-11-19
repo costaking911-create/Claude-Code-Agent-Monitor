@@ -57,6 +57,17 @@ const schemas = {
       check_exit: { type: "integer", nullable: true },
       tests_count: { type: "integer", nullable: true },
       has_screenshot: { type: "boolean", description: "The visual check saved a screenshot" },
+      review_verdict: {
+        type: "string",
+        nullable: true,
+        enum: ["SHIP", "SHIP_WITH_FIXES", "DONT_SHIP", "error"],
+        description: "Blind reviewer verdict (null when not configured)",
+      },
+      review: {
+        type: "object",
+        nullable: true,
+        description: "Blind reviewer answer per owner request, or { error } when it could not run",
+      },
       timed_out: { type: "integer", enum: [0, 1] },
       status: { type: "string", enum: ["queued", "running", "done"] },
       verdict: { type: "string", enum: ["verified", "failed", "error"], nullable: true },
@@ -82,6 +93,15 @@ const schemas = {
         type: "boolean",
         default: true,
         description: "Verify automatically two minutes after a turn ends, when the commit is new.",
+      },
+      blindReview: {
+        type: "object",
+        description:
+          "Optional blind reviewer: a read-only claude -p that sees only the owner's requests and the clean copy.",
+        properties: {
+          model: { type: "string", default: "sonnet" },
+          timeoutSec: { type: "integer", minimum: 60, maximum: 1800, default: 600 },
+        },
       },
       visual: {
         type: "object",

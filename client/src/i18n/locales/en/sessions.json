@@ -127,6 +127,22 @@
       "NO_CWD": "This session has no project folder, so it cannot be verified.",
       "NOT_FOUND": "Session not found.",
       "generic": "Could not start the check: {{message}}"
+    },
+    "review": {
+      "title": "Blind reviewer",
+      "couldNotRun": "Could not run:",
+      "verdict": {
+        "SHIP": "Everything was done",
+        "SHIP_WITH_FIXES": "Done, with small gaps",
+        "DONT_SHIP": "Not done",
+        "error": "Did not run"
+      },
+      "status": {
+        "done": "Done",
+        "partial": "Partly done",
+        "missing": "Missing",
+        "n/a": "Not relevant"
+      }
     }
   }
 }

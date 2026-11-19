@@ -3228,11 +3228,28 @@ export interface Verification {
   verdict: "verified" | "failed" | "error" | null;
   /** Short English reason for a failed/error verdict. */
   reason: string | null;
+  /** Blind reviewer's verdict (null when the project has no reviewer configured). */
+  review_verdict?: "SHIP" | "SHIP_WITH_FIXES" | "DONT_SHIP" | "error" | null;
+  /** Blind reviewer's answer per owner request, or the reason it could not run. */
+  review?: VerificationReview | null;
   /** True when the visual check saved a phone-size screenshot (GET /api/verifications/:id/screenshot). */
   has_screenshot?: boolean;
   created_at: string;
   started_at: string | null;
   ended_at: string | null;
+}
+
+/** What the blind reviewer (sees only the owner's requests + the clean copy) answered. */
+export interface VerificationReview {
+  verdict?: "SHIP" | "SHIP_WITH_FIXES" | "DONT_SHIP";
+  summary?: string;
+  requirements?: {
+    request: string;
+    status: "done" | "partial" | "missing" | "n/a";
+    evidence: string;
+  }[];
+  /** Set when the reviewer could not run (not logged in, timeout, bad output). */
+  error?: string | null;
 }
 
 /** Response of GET /api/sessions/:id/verifications. */
@@ -3252,6 +3269,10 @@ export interface VerifyProject {
   timeoutSec: number;
   /** Verify automatically after a session's turn ends, when there is a new commit (default on). */
   autoVerify?: boolean;
+  /** Blind reviewer (read-only claude -p that sees only the owner's requests); off when absent. */
+  blindReview?: { model?: string; timeoutSec?: number; enabled?: boolean } | false | null;
+  /** Visual check at phone size after the tests (edited in verify.json). */
+  visual?: Record<string, unknown> | null;
 }
 
 /** Response of GET/PUT /api/verifications/config. */

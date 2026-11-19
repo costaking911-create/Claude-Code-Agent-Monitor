@@ -664,7 +664,9 @@
     "saveError": "无法保存：{{message}}",
     "configPath": "配置文件：",
     "fieldAuto": "自动验证",
-    "fieldAutoHint": "每轮结束后，如有新提交则验证（等待 2 分钟）。"
+    "fieldAutoHint": "每轮结束后，如有新提交则验证（等待 2 分钟）。",
+    "fieldBlindReview": "盲审",
+    "fieldBlindReviewHint": "测试通过后，另一个只能看到你的请求和代码（只读）的 Claude 会检查每个请求是否真的完成。使用你的 Claude 套餐；需要在这台电脑上登录 `claude`。"
   },
   "disk": {
     "title": "磁盘清理",

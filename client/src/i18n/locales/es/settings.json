@@ -664,7 +664,9 @@
     "saveError": "No se pudo guardar: {{message}}",
     "configPath": "Archivo de configuración:",
     "fieldAuto": "Verificar automáticamente",
-    "fieldAutoHint": "Tras cada turno terminado, cuando hay un commit nuevo (espera 2 minutos)."
+    "fieldAutoHint": "Tras cada turno terminado, cuando hay un commit nuevo (espera 2 minutos).",
+    "fieldBlindReview": "Revisor ciego",
+    "fieldBlindReviewHint": "Tras pasar las pruebas, un Claude aparte que solo ve tus peticiones y el código (solo lectura) comprueba que cada petición se hizo de verdad. Usa tu plan de Claude; requiere `claude` con sesión iniciada en este equipo."
   },
   "disk": {
     "title": "Limpieza de disco",

@@ -664,7 +664,9 @@
     "saveError": "Không thể lưu: {{message}}",
     "configPath": "Tệp cấu hình:",
     "fieldAuto": "Tự động xác minh",
-    "fieldAutoHint": "Sau mỗi lượt kết thúc, khi có commit mới (chờ 2 phút)."
+    "fieldAutoHint": "Sau mỗi lượt kết thúc, khi có commit mới (chờ 2 phút).",
+    "fieldBlindReview": "Người duyệt mù",
+    "fieldBlindReviewHint": "Sau khi test đạt, một Claude riêng chỉ thấy yêu cầu của bạn và mã nguồn (chỉ đọc) kiểm tra từng yêu cầu đã thực sự được làm. Dùng gói Claude của bạn; cần đăng nhập `claude` trên máy này."
   },
   "disk": {
     "title": "Dọn dẹp ổ đĩa",

@@ -207,6 +207,32 @@ export function VerifySettings() {
                         </span>
                       </span>
                     </label>
+                    <label className="flex items-start gap-3 min-h-[44px] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={p.blindReview ? p.blindReview.enabled !== false : false}
+                        onChange={(e) =>
+                          update(i, {
+                            // Keep a custom model/timeout from verify.json across off/on.
+                            blindReview: {
+                              model: "sonnet",
+                              timeoutSec: 600,
+                              ...(p.blindReview || {}),
+                              enabled: e.target.checked,
+                            },
+                          })
+                        }
+                        className="mt-1 h-5 w-5 shrink-0 accent-accent"
+                      />
+                      <span>
+                        <span className="block text-xs text-gray-200">
+                          {t("verify.fieldBlindReview")}
+                        </span>
+                        <span className="block text-[11px] text-gray-500">
+                          {t("verify.fieldBlindReviewHint")}
+                        </span>
+                      </span>
+                    </label>
                   </div>
                 </div>
               ))}

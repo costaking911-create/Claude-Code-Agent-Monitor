@@ -17,7 +17,7 @@ import { AlertTriangle, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 import { api, ApiError } from "../lib/api";
 import { eventBus } from "../lib/eventBus";
 import { formatDateTime, formatDuration } from "../lib/format";
-import type { Verification } from "../lib/types";
+import type { Verification, VerificationReview } from "../lib/types";
 import { VerificationBadge } from "./VerificationBadge";
 
 /** How many log lines the collapsed log view shows. */
@@ -64,6 +64,91 @@ function upsert(list: Verification[], v: Verification): Verification[] {
     return next;
   }
   return [v, ...list].sort((a, b) => b.id - a.id);
+}
+
+const REVIEW_TONE: Record<string, string> = {
+  SHIP: "text-emerald-300 border-emerald-500/40 bg-emerald-500/10",
+  SHIP_WITH_FIXES: "text-amber-300 border-amber-500/40 bg-amber-500/10",
+  DONT_SHIP: "text-red-300 border-red-500/40 bg-red-500/10",
+  error: "text-gray-400 border-border bg-surface-2",
+};
+const STATUS_MARK: Record<string, string> = { done: "✓", partial: "◐", missing: "✗", "n/a": "–" };
+
+/**
+ * What the blind reviewer said: its verdict, a short summary and each owner request with
+ * done / partial / missing and the evidence. The reviewer saw only the requests and the code.
+ *
+ * @param props - The verdict and the stored review.
+ * @returns The review block.
+ */
+function BlindReview({
+  verdict,
+  review,
+}: {
+  verdict: NonNullable<Verification["review_verdict"]>;
+  review: VerificationReview | null;
+}) {
+  const { t } = useTranslation("sessions");
+  const items = (review?.requirements ?? []).filter((r) => r.status !== "n/a");
+  return (
+    <div className="space-y-2" data-testid="blind-review">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs text-gray-400">{t("verify.review.title")}</span>
+        <span
+          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${REVIEW_TONE[verdict] ?? REVIEW_TONE.error}`}
+        >
+          {t(`verify.review.verdict.${verdict}`)}
+        </span>
+      </div>
+      {verdict === "error" ? (
+        <p className="text-xs text-gray-500 break-words">
+          {t("verify.review.couldNotRun")} {review?.error && <bdi dir="ltr">{review.error}</bdi>}
+        </p>
+      ) : (
+        <>
+          {review?.summary && (
+            <p className="text-xs text-gray-300 break-words">
+              <bdi dir="auto">{review.summary}</bdi>
+            </p>
+          )}
+          {items.length > 0 && (
+            <ul className="space-y-1.5">
+              {items.map((r, i) => (
+                <li
+                  key={i}
+                  className="text-xs bg-surface-2 border border-border rounded-lg px-3 py-2"
+                  data-status={r.status}
+                >
+                  <span className="flex gap-2">
+                    <span
+                      aria-label={t(`verify.review.status.${r.status}`)}
+                      className={
+                        r.status === "done"
+                          ? "text-emerald-400"
+                          : r.status === "partial"
+                            ? "text-amber-300"
+                            : "text-red-400"
+                      }
+                    >
+                      {STATUS_MARK[r.status]}
+                    </span>
+                    <bdi dir="auto" className="text-gray-200 break-words min-w-0">
+                      {r.request}
+                    </bdi>
+                  </span>
+                  {r.evidence && (
+                    <bdi dir="auto" className="block text-[11px] text-gray-500 break-words mt-0.5">
+                      {r.evidence}
+                    </bdi>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -309,6 +394,10 @@ export function VerifyPanel({ sessionId, onLatestChange }: VerifyPanelProps) {
               {latest.check_cmd}
             </code>
           </p>
+
+          {latestDone && latest.review_verdict && (
+            <BlindReview verdict={latest.review_verdict} review={latest.review ?? null} />
+          )}
 
           {latestDone && latest.has_screenshot && <VerifyScreenshot id={latest.id} />}
 

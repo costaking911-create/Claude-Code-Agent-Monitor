@@ -664,7 +664,9 @@
     "saveError": "저장하지 못했습니다: {{message}}",
     "configPath": "설정 파일:",
     "fieldAuto": "자동 검증",
-    "fieldAutoHint": "턴이 끝날 때마다 새 커밋이 있으면 검증합니다(2분 대기)."
+    "fieldAutoHint": "턴이 끝날 때마다 새 커밋이 있으면 검증합니다(2분 대기).",
+    "fieldBlindReview": "블라인드 리뷰어",
+    "fieldBlindReviewHint": "테스트 통과 후, 요청과 코드만 보는 별도의 Claude(읽기 전용)가 각 요청이 실제로 완료되었는지 확인합니다. Claude 요금제를 사용하며 이 컴퓨터에서 `claude` 로그인이 필요합니다."
   },
   "disk": {
     "title": "디스크 정리",

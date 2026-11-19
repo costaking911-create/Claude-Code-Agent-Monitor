@@ -1148,7 +1148,7 @@ API 文档现已**全面覆盖**：每个后端路由都有文档说明（共 82
 
 ### Verifications（“已验证”）
 
-独立验证：仪表板在干净的 git (`read-tree` + `checkout-index`) 副本中重新运行项目自己的命令，结论只取自退出码和日志中的测试数量，绝不取自 agent。命令只存放在仪表板 `.env` 旁的 `verify.json`（可用 `DASHBOARD_VERIFY_CONFIG` 覆盖）；请求从不携带命令文本。一次只运行一个，磁盘可用空间低于 3 GB 时拒绝，临时副本总会删除，日志（已遮蔽密钥）位于 `<data dir>/verifications/`。自动验证（按项目，默认开启）：会话一轮结束两分钟后，尚未验证的提交会被自动验证。WebSocket：`verification_updated`。推送类型 `verified` / `verify_failed` 遵循 `DASHBOARD_PUSH_EVENTS`。 每个项目可选的可视检查（`verify.json` 中的 `visual`）：测试通过后，在已安装的无头 Chrome/Edge 中以手机尺寸打开干净副本；页面错误、空白屏幕或 `readyExpr` 为假都会使验证失败，截图显示在会话中。
+独立验证：仪表板在干净的 git (`read-tree` + `checkout-index`) 副本中重新运行项目自己的命令，结论只取自退出码和日志中的测试数量，绝不取自 agent。命令只存放在仪表板 `.env` 旁的 `verify.json`（可用 `DASHBOARD_VERIFY_CONFIG` 覆盖）；请求从不携带命令文本。一次只运行一个，磁盘可用空间低于 3 GB 时拒绝，临时副本总会删除，日志（已遮蔽密钥）位于 `<data dir>/verifications/`。自动验证（按项目，默认开启）：会话一轮结束两分钟后，尚未验证的提交会被自动验证。WebSocket：`verification_updated`。推送类型 `verified` / `verify_failed` 遵循 `DASHBOARD_PUSH_EVENTS`。 每个项目可选的可视检查（`verify.json` 中的 `visual`）：测试通过后，在已安装的无头 Chrome/Edge 中以手机尺寸打开干净副本；页面错误、空白屏幕或 `readyExpr` 为假都会使验证失败，截图显示在会话中。 每个项目可选的盲审（`verify.json` 中的 `blindReview`）：通过后，一个只读的 `claude -p`（Read/Grep/Glob，关闭钩子，不保存会话）只看到会话记录中所有者本人的请求和干净副本，并逐条回答；`DONT_SHIP` 会使验证失败，审查无法运行（例如未登录）时保持已验证。
 
 | 方法 | 路径 | 描述 |
 | --- | --- | --- |

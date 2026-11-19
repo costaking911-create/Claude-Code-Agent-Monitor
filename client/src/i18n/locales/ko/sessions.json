@@ -127,6 +127,22 @@
       "NO_CWD": "이 세션에는 프로젝트 폴더가 없어 검증할 수 없습니다.",
       "NOT_FOUND": "세션을 찾을 수 없습니다.",
       "generic": "확인을 시작하지 못했습니다: {{message}}"
+    },
+    "review": {
+      "title": "블라인드 리뷰어",
+      "couldNotRun": "실행하지 못함:",
+      "verdict": {
+        "SHIP": "모두 완료됨",
+        "SHIP_WITH_FIXES": "완료, 작은 누락 있음",
+        "DONT_SHIP": "완료되지 않음",
+        "error": "실행되지 않음"
+      },
+      "status": {
+        "done": "완료",
+        "partial": "일부 완료",
+        "missing": "누락",
+        "n/a": "해당 없음"
+      }
     }
   }
 }

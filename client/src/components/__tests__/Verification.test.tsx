@@ -147,6 +147,47 @@ describe("VerifyPanel", () => {
     expect(screen.getByText("Screenshot at phone size")).toBeInTheDocument();
   });
 
+  it("shows the blind reviewer verdict and each request", async () => {
+    list.mockResolvedValue({
+      verifications: [
+        v({
+          verdict: "failed",
+          reason: "blind review: save button missing",
+          review_verdict: "DONT_SHIP",
+          review: {
+            verdict: "DONT_SHIP",
+            summary: "save button missing",
+            requirements: [
+              { request: "תוסיף כפתור שמירה", status: "missing", evidence: "no button in app.js" },
+              { request: "thanks", status: "n/a", evidence: "" },
+              { request: "make it blue", status: "done", evidence: "style.css:4" },
+            ],
+          },
+        }),
+      ],
+      current_head: "abcdef1234567",
+    });
+    log.mockResolvedValue("ok");
+    renderPanel();
+    expect(await screen.findByText("Blind reviewer")).toBeInTheDocument();
+    expect(screen.getByText("Not done")).toBeInTheDocument();
+    expect(screen.getByText("תוסיף כפתור שמירה")).toBeInTheDocument();
+    expect(screen.getByText("no button in app.js")).toBeInTheDocument();
+    expect(screen.queryByText("thanks")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Missing")).toBeInTheDocument();
+  });
+
+  it("says when the blind reviewer could not run", async () => {
+    list.mockResolvedValue({
+      verifications: [v({ review_verdict: "error", review: { error: "Failed to authenticate" } })],
+      current_head: "abcdef1234567",
+    });
+    log.mockResolvedValue("ok");
+    renderPanel();
+    expect(await screen.findByText("Did not run")).toBeInTheDocument();
+    expect(screen.getByText("Failed to authenticate")).toBeInTheDocument();
+  });
+
   it("marks a verified run on an older commit as stale", async () => {
     list.mockResolvedValue({ verifications: [v()], current_head: "ffff000" });
     log.mockResolvedValue("");

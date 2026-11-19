@@ -1108,6 +1108,19 @@ exception, a `console.error`, a failed load (except `/favicon.ico`), a blank scr
 The screenshot is saved as `<data dir>/verifications/<id>.png` (pruned with the logs) and rows
 carry `has_screenshot`.
 
+Optional blind reviewer (`server/lib/blind-review.js`), per project in `verify.json`:
+`"blindReview": { "model": "sonnet", "timeoutSec": 600 }` (`true` = defaults). After a passing
+run (tests, and the visual check when configured), a separate `claude -p` runs in the clean copy
+with only Read/Grep/Glob (`--restricted` confines them to the copy; `--strict-mcp-config`), the prompt on stdin, hooks disabled (`disableAllHooks`) and `--no-session-persistence`. Its
+prompt holds only the owner's own requests from the session transcript (human prompts; no assistant
+text, tool output or sub-agent prompts; secrets masked; newest kept up to 12,000 characters). It
+answers with `--json-schema`: `{ verdict: SHIP | SHIP_WITH_FIXES | DONT_SHIP, summary,
+requirements: [{ request, status: done | partial | missing | n/a, evidence }] }`. `DONT_SHIP`
+turns the verdict into `failed` (`reason` starts with `blind review:`); a reviewer that cannot run
+(not logged in, timeout, bad output) is stored as `review_verdict: "error"` and the verdict stays
+`verified`. Rows carry `review_verdict` and `review` (the parsed answer or `{ error }`).
+`DASHBOARD_CLAUDE_BIN` overrides the CLI path.
+
 ### Disk cleanup
 
 Automatic disk cleanup (`server/lib/disk-janitor.js`). Every 10 minutes the server checks free space

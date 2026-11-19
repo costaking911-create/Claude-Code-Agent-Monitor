@@ -22,6 +22,7 @@ const { spawn, execFile } = require("child_process");
 const { gitSafeEnv } = require("./git-env");
 const verifyConfig = require("./verify-config");
 const { runVisualCheck } = require("./visual-check");
+const blindReview = require("./blind-review");
 
 const MAX_PHASE_OUTPUT = 5 * 1024 * 1024;
 const MIN_FREE_BYTES = 3 * 1024 ** 3;
@@ -296,6 +297,8 @@ function createVerifyRunner(deps = {}) {
   const extract = deps.extract || defaultExtract;
   const runShell = deps.runShell || defaultRunShell;
   const visualCheck = deps.visualCheck || runVisualCheck;
+  const reviewer = deps.blindReview || blindReview.runBlindReview;
+  const collectRequests = deps.collectRequests || blindReview.collectRequests;
   const getConfig = deps.getConfig || verifyConfig.readConfig;
   const tmpRoot = deps.tmpRoot || os.tmpdir();
   const logDir = deps.logDir;
@@ -319,7 +322,8 @@ function createVerifyRunner(deps = {}) {
     ),
     finish: db.prepare(
       `UPDATE verifications SET status = 'done', verdict = ?, reason = ?, setup_exit = ?, check_exit = ?,
-         tests_count = ?, timed_out = ?, log_path = ?, ended_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+         tests_count = ?, timed_out = ?, log_path = ?, review_verdict = ?, review_json = ?,
+         ended_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
        WHERE id = ?`
     ),
     active: db.prepare(
@@ -416,6 +420,8 @@ function createVerifyRunner(deps = {}) {
     let checkExit = null;
     let testsCount = null;
     let timedOut = 0;
+    let reviewVerdict = null;
+    let reviewJson = null;
     let tmp = null;
     const deadline = Date.now() + project.timeoutSec * 1000;
     const left = () => Math.max(1000, deadline - Date.now());
@@ -497,6 +503,48 @@ function createVerifyRunner(deps = {}) {
       } else {
         verdict = "verified";
       }
+
+      // Blind reviewer: only the owner's requests + the clean copy, read-only. Runs only on a
+      // passing run; when it cannot run, the tests' verdict stands.
+      if (verdict === "verified" && project.blindReview && project.blindReview.enabled !== false) {
+        write(`\n# blind review\n`);
+        const requests = (await collectRequests(session && session.transcript_path)).map((r) =>
+          maskSecrets(r)
+        );
+        const rv = await reviewer({
+          dir: tmp,
+          requests,
+          commit: row.commit_sha,
+          testsCount,
+          config: project.blindReview,
+          // Its own limit (blindReview.timeoutSec), not what is left of the test budget.
+          timeoutMs: (project.blindReview.timeoutSec || 600) * 1000,
+          write,
+          killTree,
+        });
+        // The reviewer may quote files: mask secrets before anything is stored or pushed.
+        if (rv.review) {
+          rv.review.summary = maskSecrets(rv.review.summary || "");
+          rv.review.requirements = (rv.review.requirements || []).map((q) => ({
+            ...q,
+            request: maskSecrets(q.request || ""),
+            evidence: maskSecrets(q.evidence || ""),
+          }));
+        }
+        if (rv.error) rv.error = maskSecrets(rv.error);
+        reviewVerdict = rv.verdict;
+        reviewJson = JSON.stringify(
+          rv.review ? { ...rv.review, error: null } : { error: rv.error || "reviewer failed" }
+        );
+        if (rv.error) write(`# blind review could not run: ${rv.error}\n`);
+        if (rv.verdict === "DONT_SHIP") {
+          verdict = "failed";
+          reason = `blind review: ${(rv.review && rv.review.summary) || "requests not done"}`.slice(
+            0,
+            300
+          );
+        }
+      }
     } catch (e) {
       verdict = "error";
       reason = String(e && e.message ? e.message : e).slice(0, 300);
@@ -515,7 +563,18 @@ function createVerifyRunner(deps = {}) {
         /* log is best effort */
       }
       pruneLogs();
-      stmt.finish.run(verdict, reason, setupExit, checkExit, testsCount, timedOut, logPath, row.id);
+      stmt.finish.run(
+        verdict,
+        reason,
+        setupExit,
+        checkExit,
+        testsCount,
+        timedOut,
+        logPath,
+        reviewVerdict,
+        reviewJson,
+        row.id
+      );
       publish(row.id);
       try {
         notify(session, verdict === "verified" ? "verified" : "verify_failed", reason || "");
@@ -671,7 +730,15 @@ function screenshotPath(row) {
 function publicRow(row) {
   if (!row) return row;
   const { log_path: _logPath, review_log_path: _reviewLog, ...rest } = row;
-  return { ...rest, has_screenshot: Boolean(screenshotPath(row)) };
+  let review = null;
+  if (row.review_json) {
+    try {
+      review = JSON.parse(row.review_json);
+    } catch {
+      review = null;
+    }
+  }
+  return { ...rest, review, has_screenshot: Boolean(screenshotPath(row)) };
 }
 
 module.exports = {

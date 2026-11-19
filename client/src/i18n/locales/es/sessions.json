@@ -127,6 +127,22 @@
       "NO_CWD": "Esta sesión no tiene carpeta de proyecto, así que no se puede verificar.",
       "NOT_FOUND": "Sesión no encontrada.",
       "generic": "No se pudo iniciar la comprobación: {{message}}"
+    },
+    "review": {
+      "title": "Revisor ciego",
+      "couldNotRun": "No se pudo ejecutar:",
+      "verdict": {
+        "SHIP": "Todo está hecho",
+        "SHIP_WITH_FIXES": "Hecho, con pequeños huecos",
+        "DONT_SHIP": "No está hecho",
+        "error": "No se ejecutó"
+      },
+      "status": {
+        "done": "Hecho",
+        "partial": "Hecho en parte",
+        "missing": "Falta",
+        "n/a": "No aplica"
+      }
     }
   }
 }

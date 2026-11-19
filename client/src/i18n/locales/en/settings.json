@@ -664,7 +664,9 @@
     "saveError": "Could not save: {{message}}",
     "configPath": "Config file:",
     "fieldAuto": "Verify automatically",
-    "fieldAutoHint": "After each finished turn, when there is a new commit (waits 2 minutes)."
+    "fieldAutoHint": "After each finished turn, when there is a new commit (waits 2 minutes).",
+    "fieldBlindReview": "Blind reviewer",
+    "fieldBlindReviewHint": "After the tests pass, a separate Claude that sees only your requests and the code (read-only) checks that each request was really done. Uses your Claude plan; needs `claude` logged in on this computer."
   },
   "disk": {
     "title": "Disk cleanup",
