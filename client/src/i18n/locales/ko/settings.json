@@ -665,5 +665,84 @@
     "configPath": "설정 파일:",
     "fieldAuto": "자동 검증",
     "fieldAutoHint": "턴이 끝날 때마다 새 커밋이 있으면 검증합니다(2분 대기)."
+  },
+  "disk": {
+    "title": "디스크 정리",
+    "description": "다시 만들 수 있는 임시 파일만 삭제하여 이 컴퓨터 디스크의 여유 공간을 유지합니다.",
+    "loading": "불러오는 중…",
+    "loadError": "디스크 상태를 불러오지 못했습니다: {{message}}",
+    "freeUnknown": "여유 공간을 알 수 없음",
+    "freeLabel": "여유:",
+    "ofTotal": "/",
+    "belowFloor": "최소값보다 적습니다. 지금 정리하세요.",
+    "belowTarget": "목표보다 적습니다. 정리하면 도움이 됩니다.",
+    "neverDeleted": "절대 삭제하지 않음: 코드, 대화 기록, 휴지통, 개인 파일.",
+    "auto": "자동 정리",
+    "autoHint": "여유 공간이 최소값 아래로 내려가면 목표에 도달할 때까지 정리합니다.",
+    "floor": "최소 여유 (GB)",
+    "target": "목표 여유 (GB)",
+    "save": "저장",
+    "saved": "저장됨",
+    "saveError": "저장하지 못했습니다: {{message}}",
+    "preview": "미리 보기",
+    "cleanNow": "지금 정리",
+    "running": "정리 중… 1–2분 걸릴 수 있습니다.",
+    "previewRunning": "확인 중… 아무것도 삭제하지 않습니다. 1분 정도 걸릴 수 있습니다.",
+    "cleanupError": "정리 실패: {{message}}",
+    "confirmTitle": "지금 디스크를 정리할까요?",
+    "confirmMessage": "임시 파일과 다시 만들 수 있는 파일(오래된 임시 파일, 캐시, 오래된 설치 파일)만 삭제합니다. 코드, 대화 기록, 휴지통, 개인 파일은 건드리지 않습니다. 1–2분 걸릴 수 있습니다.",
+    "confirmYes": "지금 정리",
+    "confirmCancel": "취소",
+    "resultPreview": "미리 보기 – 아무것도 삭제하지 않았습니다. {{size}} 확보 가능",
+    "resultDone": "완료 – {{size}} 확보",
+    "colStep": "항목",
+    "colFreed": "크기",
+    "colRemoved": "개수",
+    "stepError": "오류:",
+    "historyTitle": "최근 실행",
+    "historyEmpty": "아직 실행 기록이 없습니다.",
+    "historyFreed": "확보",
+    "historyWould": "확보 가능",
+    "suggestionsTitle": "결정이 필요함",
+    "suggestionsHint": "자동으로는 절대 하지 않는 더 큰 절약 방법입니다.",
+    "configPath": "설정 파일:",
+    "indicator": "디스크 여유",
+    "indicatorTitle": "디스크 여유 공간: {{size}}. 디스크 정리 열기",
+    "steps": {
+      "verify_copies": "오래된 검증 사본",
+      "monitor_installers": "오래된 Monitor 설치 파일",
+      "temp_old": "오래된 임시 파일",
+      "claude_scratch_old": "오래된 Claude 임시 작업 파일",
+      "npm_cache": "npm 캐시",
+      "tool_temp": "도구 임시 파일",
+      "next_cache": "Next.js 빌드 캐시"
+    },
+    "reasons": {
+      "auto": "자동",
+      "manual": "수동",
+      "preview": "미리 보기"
+    },
+    "suggestions": {
+      "windows_update": {
+        "title": "Windows Update 캐시",
+        "text": "관리자 권한으로 Windows \"디스크 정리\"를 사용하세요."
+      },
+      "hibernation": {
+        "title": "최대 절전 모드",
+        "text": "최대 절전 모드를 끄면 예약된 공간이 확보됩니다."
+      },
+      "downloads": {
+        "title": "다운로드 폴더",
+        "text": "다운로드 폴더의 오래된 동영상과 설치 파일."
+      },
+      "worktrees": {
+        "title": "오래된 worktree",
+        "text": "프로젝트의 오래된 작업 사본."
+      },
+      "app_data": {
+        "title": "앱 데이터",
+        "text": "Deepchart 같은 앱의 큰 데이터베이스. 앱 안에서 정리하세요."
+      }
+    }
   }
 }

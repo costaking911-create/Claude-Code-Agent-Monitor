@@ -1159,6 +1159,16 @@ API 文档现已**全面覆盖**：每个后端路由都有文档说明（共 82
 | `GET` | `/api/verifications/config` | 按项目的命令 |
 | `PUT` | `/api/verifications/config` | 替换按项目的命令（已校验） |
 
+### 磁盘清理
+
+为几乎写满的机器自动清理磁盘：每 10 分钟检查一次，当临时目录所在磁盘的可用空间低于下限（默认 3 GB）时，服务器只删除可重新生成或临时的数据（从最旧的开始），直到达到目标（默认 5 GB）：残留的验证副本、已下载的 Monitor 安装包、3 天以上未改动的临时文件、闲置 7 天以上的 Claude 草稿目录、闲置的 npm 缓存、其他工具的临时/更新目录，以及已配置项目的 `.next/cache`。绝不触碰源代码、git 仓库、对话记录、仪表板数据库、回收站或个人文件；需要决定的大项只作为建议列出。设置保存在 `.env` 旁的 `disk-janitor.json`（可用 `DASHBOARD_DISK_JANITOR_CONFIG` 覆盖；`DASHBOARD_DISK_JANITOR=0` 关闭定时任务）。WebSocket：`disk_cleanup`。
+
+| 方法 | 路径 | 描述 |
+| --- | --- | --- |
+| `GET` | `/api/disk` | 可用/总空间、设置、最近运行、建议 |
+| `POST` | `/api/disk/cleanup` | 立即运行；`{ "dryRun": true }` 只预览不删除 |
+| `PUT` | `/api/disk/config` | 保存 `{ enabled, floorGb, targetGb }` |
+
 ### 告警
 
 | 方法 | 路径 | 描述 |

@@ -1149,6 +1149,16 @@ Verificación independiente: el panel vuelve a ejecutar los comandos del propio 
 | `GET` | `/api/verifications/config` | Comandos por proyecto |
 | `PUT` | `/api/verifications/config` | Reemplazar comandos por proyecto (validados) |
 
+### Limpieza de disco
+
+Limpieza automática para equipos casi llenos: cada 10 minutos, si el espacio libre de la unidad temporal está por debajo del mínimo (3 GB por defecto), el servidor borra solo datos temporales o regenerables, los más antiguos primero, hasta el objetivo (5 GB por defecto): copias de verificación sobrantes, instaladores de Monitor descargados, entradas temporales sin cambios en 3+ días, carpetas de trabajo de Claude inactivas 7+ días, la caché de npm inactiva, carpetas temporales/de actualización de otras herramientas y `.next/cache` de los proyectos configurados. Nunca toca código, repositorios git, transcripciones, la base de datos del panel, la Papelera ni archivos personales; los ahorros grandes que requieren decisión se muestran solo como sugerencias. Ajustes en `disk-janitor.json` junto al `.env` (`DASHBOARD_DISK_JANITOR_CONFIG` lo sustituye; `DASHBOARD_DISK_JANITOR=0` desactiva el programador). WebSocket: `disk_cleanup`.
+
+| Método | Camino                          | Descripción                                             |
+| --- | --- | --- |
+| `GET` | `/api/disk` | Espacio libre/total, ajustes, últimas ejecuciones, sugerencias |
+| `POST` | `/api/disk/cleanup` | Ejecutar ahora; `{ "dryRun": true }` solo previsualiza |
+| `PUT` | `/api/disk/config` | Guardar `{ enabled, floorGb, targetGb }` |
+
 ### Alertas
 
 | Método | Ruta                     | Descripción                                                                 |

@@ -1155,6 +1155,16 @@ npm run openapi:yaml
 | `GET` | `/api/verifications/config` | 프로젝트별 명령 |
 | `PUT` | `/api/verifications/config` | 프로젝트별 명령 교체(검증됨) |
 
+### 디스크 정리
+
+거의 가득 찬 기기를 위한 자동 디스크 정리: 10분마다 임시 폴더가 있는 드라이브의 여유 공간이 하한(기본 3 GB) 미만이면, 서버는 다시 만들 수 있거나 임시인 데이터만 오래된 것부터 목표(기본 5 GB)까지 삭제합니다: 남은 검증 사본, 다운로드한 Monitor 설치 파일, 3일 이상 변경 없는 임시 항목, 7일 이상 쓰지 않은 Claude 스크래치 폴더, 쓰지 않는 npm 캐시, 다른 도구의 임시/업데이트 폴더, 설정된 프로젝트의 `.next/cache`. 소스 코드, git 저장소, 대화 기록, 대시보드 데이터베이스, 휴지통, 개인 파일은 절대 건드리지 않으며, 결정이 필요한 큰 항목은 제안으로만 표시합니다. 설정은 `.env` 옆 `disk-janitor.json`(`DASHBOARD_DISK_JANITOR_CONFIG`로 재정의, `DASHBOARD_DISK_JANITOR=0`이면 스케줄러 끔). WebSocket: `disk_cleanup`.
+
+| 메서드 | 경로                          | 설명                                                    |
+| --- | --- | --- |
+| `GET` | `/api/disk` | 여유/전체 공간, 설정, 최근 실행, 제안 |
+| `POST` | `/api/disk/cleanup` | 즉시 실행; `{ "dryRun": true }`는 삭제 없이 미리보기 |
+| `PUT` | `/api/disk/config` | `{ enabled, floorGb, targetGb }` 저장 |
+
 ### 알림
 
 | 메서드   | 경로                     | 설명                                                                   |

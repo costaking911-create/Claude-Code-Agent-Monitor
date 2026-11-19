@@ -2314,7 +2314,7 @@ export interface WSMessage {
    *  alert_triggered/alert_updated → AlertEvent; workflow_upserted → WorkflowRun;
    *  remote_source.status → RemoteSourceStatusPayload;
    *  remote_data.updated → RemoteDataUpdatedPayload;
-   *  verification_updated → Verification. */
+   *  verification_updated → Verification; disk_cleanup → DiskCleanupEntry. */
   type:
     | "session_created"
     | "session_updated"
@@ -2333,7 +2333,8 @@ export interface WSMessage {
     | "workflow_upserted"
     | "remote_source.status"
     | "remote_data.updated"
-    | "verification_updated";
+    | "verification_updated"
+    | "disk_cleanup";
   /** The message body, whose concrete shape is selected by `type` above. */
   data:
     | Session
@@ -2349,7 +2350,8 @@ export interface WSMessage {
     | WorkflowRun
     | RemoteSourceStatusPayload
     | RemoteDataUpdatedPayload
-    | Verification;
+    | Verification
+    | DiskCleanupEntry;
   /** ISO timestamp the server broadcast this message (not necessarily the
    *  same instant the underlying event occurred). */
   timestamp: string;
@@ -3255,4 +3257,79 @@ export interface VerifyConfig {
   /** Absolute path of the config file on the server machine. */
   path: string;
   projects: VerifyProject[];
+}
+
+// ───── Disk cleanup ─────
+
+/** Ids of the safe cleanup steps, in the order the server runs them. */
+export type DiskCleanupStepId =
+  | "verify_copies"
+  | "monitor_installers"
+  | "temp_old"
+  | "claude_scratch_old"
+  | "npm_cache"
+  | "tool_temp"
+  | "next_cache";
+
+/** What one cleanup step freed (or would free, in a preview). */
+export interface DiskCleanupStep {
+  id: DiskCleanupStepId;
+  /** Bytes freed (or that would be freed). */
+  freed: number;
+  /** Items removed (or that would be removed). */
+  removed: number;
+  /** Items kept because they were too new or in use. */
+  kept?: number;
+  /** Short English error when the step failed. */
+  error?: string;
+}
+
+/** One cleanup run or preview. Pushed live as the `disk_cleanup` WebSocket message. */
+export interface DiskCleanupEntry {
+  /** ISO timestamp of the run. */
+  at: string;
+  reason: "auto" | "manual" | "preview";
+  /** True for a preview that deleted nothing. */
+  dry_run: boolean;
+  free_before: number | null;
+  free_after: number | null;
+  /** Total bytes freed (or that would be freed). */
+  freed: number;
+  steps: DiskCleanupStep[];
+}
+
+/** Disk cleanup settings, stored on the server. */
+export interface DiskConfig {
+  enabled: boolean;
+  /** Clean up automatically when free space drops below this many GB. */
+  floorGb: number;
+  /** Clean until this many GB are free. */
+  targetGb: number;
+}
+
+/** A bigger saving that needs the owner's decision (never done automatically). */
+export interface DiskSuggestion {
+  id: "windows_update" | "hibernation" | "downloads" | "worktrees" | "app_data";
+  /** Short English hint from the server. */
+  hint: string;
+}
+
+/** Response of GET /api/disk and PUT /api/disk/config. */
+export interface DiskStatus {
+  /** Absolute path of the settings file on the server machine. */
+  path: string;
+  free_bytes: number | null;
+  total_bytes: number | null;
+  config: DiskConfig;
+  below_floor: boolean;
+  /** True while a cleanup is running. */
+  running: boolean;
+  /** Newest first, at most 10. */
+  history: DiskCleanupEntry[];
+  suggestions: DiskSuggestion[];
+}
+
+/** Response of POST /api/disk/cleanup. */
+export interface DiskCleanupResponse extends DiskStatus {
+  result: DiskCleanupEntry;
 }

@@ -806,6 +806,9 @@ import type {
   Verification,
   VerificationsResponse,
   VerifyConfig,
+  DiskStatus,
+  DiskCleanupResponse,
+  DiskConfig,
   VerifyProject,
   WebhookDelivery,
   WebhookProvider,
@@ -1863,6 +1866,27 @@ export const api = {
       request<VerifyConfig>("/verifications/config", {
         method: "PUT",
         body: JSON.stringify({ projects }),
+      }),
+  },
+
+  // ───────────────────────────── Disk cleanup API ─────────────────────────────
+  /** Automatic disk cleanup: free space, settings, recent runs and suggestions. Cleanup only
+   *  removes temporary or re-creatable files on the server machine. */
+  disk: {
+    /** GET /api/disk - free space, settings, last 10 runs and owner-decision suggestions. */
+    status: () => request<DiskStatus>("/disk"),
+    /** POST /api/disk/cleanup - run a cleanup (or a preview with `dryRun: true`). Waits until it
+     *  ends, which can take 1–2 minutes. */
+    cleanup: (dryRun: boolean) =>
+      request<DiskCleanupResponse>("/disk/cleanup", {
+        method: "POST",
+        body: JSON.stringify({ dryRun }),
+      }),
+    /** PUT /api/disk/config - save the switch and the floor/target (GB). */
+    saveConfig: (config: DiskConfig) =>
+      request<DiskStatus>("/disk/config", {
+        method: "PUT",
+        body: JSON.stringify(config),
       }),
   },
 

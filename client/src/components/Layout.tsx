@@ -218,6 +218,7 @@ import { UpdateNotifier } from "./UpdateNotifier";
 import { CommandPalette } from "./CommandPalette";
 import { Tabby } from "./Tabby/Tabby";
 import { ActionToast } from "./ActionToast";
+import { DiskIndicator } from "./DiskIndicator";
 import { PaletteActionProvider, usePaletteAction } from "./PaletteActionProvider";
 import { useIsMobile } from "../hooks/useIsMobile";
 
@@ -323,6 +324,9 @@ export function Layout({ wsConnected }: LayoutProps) {
                 {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <span className="text-sm font-semibold text-gray-100">Claude Code Monitor</span>
+              <span className="ms-auto">
+                <DiskIndicator variant="chip" />
+              </span>
             </div>
           )}
           {/* overflow-x-clip (not -hidden) clips horizontal overflow without

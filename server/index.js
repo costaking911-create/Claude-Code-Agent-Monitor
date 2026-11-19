@@ -46,6 +46,7 @@ const pricingRouter = require("./routes/pricing");
 const settingsRouter = require("./routes/settings");
 const workflowsRouter = require("./routes/workflows");
 const verificationsRoutes = require("./routes/verifications");
+const diskRoutes = require("./routes/disk");
 const pushRouter = require("./routes/push");
 const importRouter = require("./routes/import");
 const updatesRouter = require("./routes/updates");
@@ -90,6 +91,7 @@ function createApp() {
   app.use("/api/sessions", verificationsRoutes.sessionRoutes);
   app.use("/api/sessions", sessionsRouter);
   app.use("/api/verifications", verificationsRoutes.verificationRoutes);
+  app.use("/api/disk", diskRoutes.router);
   app.use("/api/agents", agentsRouter);
   app.use("/api/events", eventsRouter);
   app.use("/api/stats", statsRouter);
@@ -526,6 +528,15 @@ function startBackgroundServices() {
   const { startUpdateScheduler } = require("./update-scheduler");
   const { broadcast } = require("./websocket");
   startUpdateScheduler({ broadcast });
+
+  // Automatic disk cleanup below the free-space floor (settings in disk-janitor.json).
+  if (process.env.DASHBOARD_DISK_JANITOR !== "0") {
+    try {
+      diskRoutes.getJanitor().start();
+    } catch (err) {
+      console.warn("disk janitor failed to start:", err?.message || err);
+    }
+  }
   try {
     const { startCcWatcher } = require("./lib/cc-watcher");
     startCcWatcher({ broadcast });

@@ -665,5 +665,84 @@
     "configPath": "Tệp cấu hình:",
     "fieldAuto": "Tự động xác minh",
     "fieldAutoHint": "Sau mỗi lượt kết thúc, khi có commit mới (chờ 2 phút)."
+  },
+  "disk": {
+    "title": "Dọn dẹp ổ đĩa",
+    "description": "Giữ dung lượng trống trên ổ đĩa của máy này bằng cách chỉ xóa các tệp tạm có thể tạo lại.",
+    "loading": "Đang tải…",
+    "loadError": "Không tải được trạng thái ổ đĩa: {{message}}",
+    "freeUnknown": "Không rõ dung lượng trống",
+    "freeLabel": "Trống:",
+    "ofTotal": "trên",
+    "belowFloor": "Dưới mức tối thiểu. Hãy dọn ngay.",
+    "belowTarget": "Dưới mục tiêu. Dọn dẹp sẽ có ích.",
+    "neverDeleted": "Không bao giờ xóa: mã nguồn, lịch sử hội thoại, Thùng rác, tệp cá nhân.",
+    "auto": "Tự động dọn dẹp",
+    "autoHint": "Khi dung lượng trống xuống dưới mức tối thiểu, dọn cho tới khi đạt mục tiêu.",
+    "floor": "Trống tối thiểu (GB)",
+    "target": "Trống mục tiêu (GB)",
+    "save": "Lưu",
+    "saved": "Đã lưu",
+    "saveError": "Không lưu được: {{message}}",
+    "preview": "Xem trước",
+    "cleanNow": "Dọn ngay",
+    "running": "Đang dọn… có thể mất 1–2 phút.",
+    "previewRunning": "Đang kiểm tra… không xóa gì. Có thể mất một phút.",
+    "cleanupError": "Dọn dẹp thất bại: {{message}}",
+    "confirmTitle": "Dọn ổ đĩa ngay?",
+    "confirmMessage": "Chỉ xóa tệp tạm và tệp có thể tạo lại (tệp tạm cũ, bộ nhớ đệm, bộ cài cũ). Mã nguồn, lịch sử hội thoại, Thùng rác và tệp cá nhân không bao giờ bị động tới. Có thể mất 1–2 phút.",
+    "confirmYes": "Dọn ngay",
+    "confirmCancel": "Hủy",
+    "resultPreview": "Xem trước – chưa xóa gì. Có thể giải phóng {{size}}",
+    "resultDone": "Xong – đã giải phóng {{size}}",
+    "colStep": "Mục",
+    "colFreed": "Dung lượng",
+    "colRemoved": "Số mục",
+    "stepError": "Lỗi:",
+    "historyTitle": "Lần chạy gần đây",
+    "historyEmpty": "Chưa có lần chạy nào.",
+    "historyFreed": "đã giải phóng",
+    "historyWould": "có thể giải phóng",
+    "suggestionsTitle": "Cần bạn quyết định",
+    "suggestionsHint": "Các khoản tiết kiệm lớn hơn không bao giờ tự động thực hiện.",
+    "configPath": "Tệp cài đặt:",
+    "indicator": "Ổ đĩa trống",
+    "indicatorTitle": "Dung lượng trống: {{size}}. Mở dọn dẹp ổ đĩa",
+    "steps": {
+      "verify_copies": "Bản sao kiểm chứng cũ",
+      "monitor_installers": "Bộ cài Monitor cũ",
+      "temp_old": "Tệp tạm cũ",
+      "claude_scratch_old": "Tệp nháp cũ của Claude",
+      "npm_cache": "Bộ nhớ đệm npm",
+      "tool_temp": "Tệp tạm của công cụ",
+      "next_cache": "Bộ nhớ đệm build Next.js"
+    },
+    "reasons": {
+      "auto": "Tự động",
+      "manual": "Thủ công",
+      "preview": "Xem trước"
+    },
+    "suggestions": {
+      "windows_update": {
+        "title": "Bộ nhớ đệm Windows Update",
+        "text": "Dùng \"Disk Cleanup\" của Windows với quyền quản trị."
+      },
+      "hibernation": {
+        "title": "Ngủ đông",
+        "text": "Tắt chế độ ngủ đông để giải phóng dung lượng nó giữ."
+      },
+      "downloads": {
+        "title": "Thư mục Tải xuống",
+        "text": "Video và tệp cài đặt cũ trong Tải xuống."
+      },
+      "worktrees": {
+        "title": "Worktree cũ",
+        "text": "Bản sao làm việc cũ của dự án."
+      },
+      "app_data": {
+        "title": "Dữ liệu ứng dụng",
+        "text": "Cơ sở dữ liệu lớn của ứng dụng như Deepchart. Dọn từ bên trong ứng dụng."
+      }
+    }
   }
 }

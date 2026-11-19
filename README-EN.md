@@ -1159,6 +1159,16 @@ Independent verification: the dashboard re-runs the project's own commands in a 
 | `GET` | `/api/verifications/config` | Per-project commands |
 | `PUT` | `/api/verifications/config` | Replace per-project commands (validated) |
 
+### Disk cleanup
+
+Automatic disk cleanup for nearly full machines: every 10 minutes, when free space on the temp drive is below the floor (default 3 GB), the server deletes only re-creatable or temporary data, oldest first, until the target (default 5 GB): leftover verification copies, downloaded Monitor installers, temp entries untouched for 3+ days, Claude scratch folders idle 7+ days, an idle npm cache, other tools' temp/updater folders, and `.next/cache` of configured projects. It never touches source code, git repositories, transcripts, the dashboard database, the Recycle Bin or personal files; bigger savings that need a decision are listed as suggestions. Settings in `disk-janitor.json` next to the `.env` (`DASHBOARD_DISK_JANITOR_CONFIG` overrides; `DASHBOARD_DISK_JANITOR=0` disables the scheduler). WebSocket: `disk_cleanup`.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/disk` | Free/total space, settings, last runs, suggestions |
+| `POST` | `/api/disk/cleanup` | Run now; `{ "dryRun": true }` previews without deleting |
+| `PUT` | `/api/disk/config` | Save `{ enabled, floorGb, targetGb }` |
+
 ### Alerts
 
 | Method   | Path                     | Description                                                            |

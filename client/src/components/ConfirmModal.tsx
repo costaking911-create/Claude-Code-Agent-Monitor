@@ -306,7 +306,7 @@ export function ConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="text-gray-500 hover:text-gray-300 p-1 -mt-1 -mr-1"
+            className="text-gray-500 hover:text-gray-300 p-1 -mt-1 -me-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center"
             aria-label={cancelLabel}
           >
             <X className="w-4 h-4" />
@@ -317,7 +317,7 @@ export function ConfirmModal({
             ref={cancelRef}
             type="button"
             onClick={onCancel}
-            className="btn-ghost border border-border text-xs"
+            className="btn-ghost border border-border text-xs min-h-[44px] sm:min-h-0"
           >
             {cancelLabel}
           </button>
@@ -325,7 +325,7 @@ export function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={busy}
-            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 min-h-[44px] sm:min-h-0 rounded-md transition-colors disabled:opacity-50 ${
               destructive
                 ? "text-red-200 bg-red-500/15 border border-red-500/30 hover:bg-red-500/25"
                 : "btn-primary"

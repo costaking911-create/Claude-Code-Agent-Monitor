@@ -1140,6 +1140,16 @@ Xác minh độc lập: dashboard chạy lại các lệnh của chính dự án
 | `GET` | `/api/verifications/config` | Lệnh theo từng dự án |
 | `PUT` | `/api/verifications/config` | Thay lệnh theo từng dự án (có kiểm tra) |
 
+### Dọn ổ đĩa
+
+Tự động dọn ổ đĩa cho máy gần đầy: mỗi 10 phút, khi dung lượng trống của ổ chứa thư mục tạm dưới ngưỡng (mặc định 3 GB), máy chủ chỉ xóa dữ liệu tạm hoặc có thể tạo lại, cũ nhất trước, cho đến mục tiêu (mặc định 5 GB): bản sao xác minh còn sót, bộ cài Monitor đã tải, mục tạm không đổi từ 3 ngày, thư mục nháp Claude không dùng 7 ngày, bộ nhớ đệm npm không dùng, thư mục tạm/cập nhật của công cụ khác và `.next/cache` của các dự án đã cấu hình. Không bao giờ đụng mã nguồn, kho git, bản ghi hội thoại, cơ sở dữ liệu dashboard, Thùng rác hay tệp cá nhân; các khoản lớn cần quyết định chỉ được liệt kê làm gợi ý. Cài đặt trong `disk-janitor.json` cạnh `.env` (`DASHBOARD_DISK_JANITOR_CONFIG` để ghi đè; `DASHBOARD_DISK_JANITOR=0` tắt lịch). WebSocket: `disk_cleanup`.
+
+| Phương pháp | Con đường                          | Sự miêu tả                                             |
+| --- | --- | --- |
+| `GET` | `/api/disk` | Dung lượng trống/tổng, cài đặt, các lần chạy gần đây, gợi ý |
+| `POST` | `/api/disk/cleanup` | Chạy ngay; `{ "dryRun": true }` chỉ xem trước, không xóa |
+| `PUT` | `/api/disk/config` | Lưu `{ enabled, floorGb, targetGb }` |
+
 ### Cảnh báo
 
 | Phương thức | Đường dẫn | Mô tả |

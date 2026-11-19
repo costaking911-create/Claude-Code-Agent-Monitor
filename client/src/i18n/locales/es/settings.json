@@ -665,5 +665,84 @@
     "configPath": "Archivo de configuración:",
     "fieldAuto": "Verificar automáticamente",
     "fieldAutoHint": "Tras cada turno terminado, cuando hay un commit nuevo (espera 2 minutos)."
+  },
+  "disk": {
+    "title": "Limpieza de disco",
+    "description": "Mantiene espacio libre en el disco de este equipo eliminando solo archivos temporales que se pueden volver a crear.",
+    "loading": "Cargando…",
+    "loadError": "No se pudo cargar el estado del disco: {{message}}",
+    "freeUnknown": "Espacio libre desconocido",
+    "freeLabel": "Libre:",
+    "ofTotal": "de",
+    "belowFloor": "Por debajo del mínimo. Limpia ahora.",
+    "belowTarget": "Por debajo del objetivo. Una limpieza ayudaría.",
+    "neverDeleted": "Nunca se elimina: código, historial de conversaciones, la Papelera de reciclaje, archivos personales.",
+    "auto": "Limpieza automática",
+    "autoHint": "Cuando el espacio libre baja del mínimo, limpia hasta alcanzar el objetivo.",
+    "floor": "Mínimo libre (GB)",
+    "target": "Objetivo libre (GB)",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "saveError": "No se pudo guardar: {{message}}",
+    "preview": "Vista previa",
+    "cleanNow": "Limpiar ahora",
+    "running": "Limpiando… puede tardar 1–2 minutos.",
+    "previewRunning": "Comprobando… no se elimina nada. Puede tardar un minuto.",
+    "cleanupError": "La limpieza falló: {{message}}",
+    "confirmTitle": "¿Limpiar el disco ahora?",
+    "confirmMessage": "Solo se eliminan archivos temporales y que se pueden volver a crear (temporales antiguos, cachés, instaladores antiguos). El código, el historial de conversaciones, la Papelera de reciclaje y los archivos personales nunca se tocan. Puede tardar 1–2 minutos.",
+    "confirmYes": "Limpiar ahora",
+    "confirmCancel": "Cancelar",
+    "resultPreview": "Vista previa: no se eliminó nada. Liberaría {{size}}",
+    "resultDone": "Listo: se liberaron {{size}}",
+    "colStep": "Qué",
+    "colFreed": "Tamaño",
+    "colRemoved": "Elementos",
+    "stepError": "Error:",
+    "historyTitle": "Ejecuciones recientes",
+    "historyEmpty": "Aún no hay ejecuciones.",
+    "historyFreed": "liberado",
+    "historyWould": "liberaría",
+    "suggestionsTitle": "Requiere tu decisión",
+    "suggestionsHint": "Ahorros mayores que nunca se hacen automáticamente.",
+    "configPath": "Archivo de configuración:",
+    "indicator": "Disco libre",
+    "indicatorTitle": "Espacio libre en disco: {{size}}. Abrir limpieza de disco",
+    "steps": {
+      "verify_copies": "Copias de verificación antiguas",
+      "monitor_installers": "Instaladores antiguos de Monitor",
+      "temp_old": "Archivos temporales antiguos",
+      "claude_scratch_old": "Archivos borrador antiguos de Claude",
+      "npm_cache": "Caché de npm",
+      "tool_temp": "Archivos temporales de herramientas",
+      "next_cache": "Caché de compilación de Next.js"
+    },
+    "reasons": {
+      "auto": "Automática",
+      "manual": "Manual",
+      "preview": "Vista previa"
+    },
+    "suggestions": {
+      "windows_update": {
+        "title": "Caché de Windows Update",
+        "text": "Usa el \"Liberador de espacio en disco\" de Windows como administrador."
+      },
+      "hibernation": {
+        "title": "Hibernación",
+        "text": "Desactiva la hibernación para liberar el espacio que reserva."
+      },
+      "downloads": {
+        "title": "Carpeta Descargas",
+        "text": "Videos e instaladores antiguos en Descargas."
+      },
+      "worktrees": {
+        "title": "Worktrees antiguos",
+        "text": "Copias de trabajo antiguas de proyectos."
+      },
+      "app_data": {
+        "title": "Datos de apps",
+        "text": "Bases de datos grandes de apps como Deepchart. Límpialas desde la propia app."
+      }
+    }
   }
 }

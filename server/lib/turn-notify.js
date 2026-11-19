@@ -107,4 +107,40 @@ function notifyTurn(db, session, kind, detail) {
   return true;
 }
 
-module.exports = { notifyTurn, projectName, _lastSent: lastSent };
+/**
+ * Notify that the disk janitor ran automatically (or that space is still low after it).
+ * Sent whenever any push kind is enabled, like verification results.
+ *
+ * @param {import("better-sqlite3").Database} db
+ * @param {{ freed: number, free_after: number|null }} entry - The cleanup result.
+ * @param {boolean} stillLow - Free space is still under the floor after cleaning.
+ * @returns {boolean} Whether a notification was dispatched.
+ */
+function notifyDisk(db, entry, stillLow) {
+  if (!entry || enabledKinds().size === 0) return false;
+  const gb = (n) => (Number(n || 0) / 1024 ** 3).toFixed(1);
+  const he = String(process.env.DASHBOARD_PUSH_LANG || "en").toLowerCase() === "he";
+  const freed = gb(entry.freed);
+  const free = gb(entry.free_after);
+  const [title, body] = he
+    ? stillLow
+      ? [
+          "⚠️ הדיסק עדיין כמעט מלא",
+          `נוקו ${freed}GB, נשארו רק ${free}GB פנויים – צריך החלטה שלך (הגדרות › ניקוי דיסק)`,
+        ]
+      : ["🧹 ניקוי דיסק", `נוקו ${freed}GB אוטומטית. פנוי עכשיו: ${free}GB`]
+    : stillLow
+      ? [
+          "⚠️ Disk still almost full",
+          `Freed ${freed} GB, only ${free} GB free – needs your decision (Settings › Disk cleanup)`,
+        ]
+      : ["🧹 Disk cleanup", `Freed ${freed} GB automatically. Free now: ${free} GB`];
+  sendPushToAll(db, title, body, {
+    native: process.env.DASHBOARD_PUSH_NATIVE !== "0",
+    url: "/settings#disk",
+    tag: "disk-janitor",
+  }).catch(() => undefined);
+  return true;
+}
+
+module.exports = { notifyTurn, notifyDisk, projectName, _lastSent: lastSent };

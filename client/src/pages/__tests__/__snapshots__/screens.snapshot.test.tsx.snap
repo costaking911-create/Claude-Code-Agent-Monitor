@@ -8143,6 +8143,47 @@ exports[`screen snapshots > Settings 1`] = `
         </button>
         <button
           class="inline-flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 rounded-lg border transition-colors flex-shrink-0 border-border text-gray-400 hover:text-gray-200 hover:bg-surface-3"
+          data-settings-section="disk"
+          type="button"
+        >
+          <svg
+            class="lucide lucide-hard-drive w-3.5 h-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="22"
+              x2="2"
+              y1="12"
+              y2="12"
+            />
+            <path
+              d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+            />
+            <line
+              x1="6"
+              x2="6.01"
+              y1="16"
+              y2="16"
+            />
+            <line
+              x1="10"
+              x2="10.01"
+              y1="16"
+              y2="16"
+            />
+          </svg>
+          Disk cleanup
+        </button>
+        <button
+          class="inline-flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 rounded-lg border transition-colors flex-shrink-0 border-border text-gray-400 hover:text-gray-200 hover:bg-surface-3"
           data-settings-section="data"
           type="button"
         >
@@ -11542,6 +11583,349 @@ exports[`screen snapshots > Settings 1`] = `
             dir="ltr"
           >
             /x/verify.json
+          </code>
+        </p>
+      </div>
+    </section>
+    <section
+      class="scroll-mt-24"
+      id="disk"
+    >
+      <h3
+        class="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1"
+      >
+        <svg
+          class="lucide lucide-hard-drive w-4 h-4 text-gray-500"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="22"
+            x2="2"
+            y1="12"
+            y2="12"
+          />
+          <path
+            d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+          />
+          <line
+            x1="6"
+            x2="6.01"
+            y1="16"
+            y2="16"
+          />
+          <line
+            x1="10"
+            x2="10.01"
+            y1="16"
+            y2="16"
+          />
+        </svg>
+        Disk cleanup
+      </h3>
+      <p
+        class="text-xs text-gray-500 mb-4"
+      >
+        Keeps free space on this computer's disk by removing only temporary files that can be re-created.
+      </p>
+      <div
+        class="card p-4 sm:p-5 space-y-5"
+      >
+        <div
+          class="space-y-2"
+        >
+          <div
+            class="flex items-center justify-between gap-2 text-sm"
+          >
+            <span
+              class="inline-flex items-center gap-2 text-gray-200"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-hard-drive w-4 h-4 text-gray-500"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  x1="22"
+                  x2="2"
+                  y1="12"
+                  y2="12"
+                />
+                <path
+                  d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                />
+                <line
+                  x1="6"
+                  x2="6.01"
+                  y1="16"
+                  y2="16"
+                />
+                <line
+                  x1="10"
+                  x2="10.01"
+                  y1="16"
+                  y2="16"
+                />
+              </svg>
+              <span>
+                Free:
+                 
+                <bdi
+                  class="font-semibold"
+                  dir="ltr"
+                >
+                  8.0 GB
+                </bdi>
+                <span
+                  class="text-gray-500"
+                >
+                   
+                  of
+                   
+                  <bdi
+                    dir="ltr"
+                  >
+                    64.0 GB
+                  </bdi>
+                </span>
+              </span>
+            </span>
+          </div>
+          <div
+            aria-label="Free:"
+            aria-valuemax="100"
+            aria-valuemin="0"
+            aria-valuenow="13"
+            class="h-2.5 w-full rounded-full bg-surface-3 border border-border overflow-hidden"
+            data-level="ok"
+            role="meter"
+          >
+            <div
+              class="h-full rounded-full bg-emerald-500"
+              style="width: 12.5%;"
+            />
+          </div>
+        </div>
+        <p
+          class="text-xs text-gray-400"
+        >
+          Never deleted: code, conversation history, the Recycle Bin, personal files.
+        </p>
+        <div
+          class="bg-surface-2 border border-border rounded-lg px-3 py-3 space-y-3"
+        >
+          <button
+            aria-checked="true"
+            class="w-full flex items-center justify-between gap-3 min-h-[44px] text-start"
+            role="switch"
+            type="button"
+          >
+            <span>
+              <span
+                class="block text-sm text-gray-200"
+              >
+                Automatic cleanup
+              </span>
+              <span
+                class="block text-[11px] text-gray-500"
+              >
+                When free space drops below the minimum, clean up until the target is reached.
+              </span>
+            </span>
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors bg-accent"
+            >
+              <span
+                class="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-[inset-inline-start] start-[1.375rem]"
+              />
+            </span>
+          </button>
+          <div
+            class="grid grid-cols-2 gap-3"
+          >
+            <label
+              class="block"
+            >
+              <span
+                class="text-[11px] text-gray-500"
+              >
+                Minimum free (GB)
+              </span>
+              <input
+                class="input w-full mt-1 min-h-[44px] py-2 text-sm leading-normal"
+                dir="ltr"
+                inputmode="decimal"
+                min="0.5"
+                step="0.5"
+                type="number"
+                value="3"
+              />
+            </label>
+            <label
+              class="block"
+            >
+              <span
+                class="text-[11px] text-gray-500"
+              >
+                Target free (GB)
+              </span>
+              <input
+                class="input w-full mt-1 min-h-[44px] py-2 text-sm leading-normal"
+                dir="ltr"
+                inputmode="decimal"
+                min="0.5"
+                step="0.5"
+                type="number"
+                value="5"
+              />
+            </label>
+          </div>
+          <div
+            class="flex flex-wrap items-center gap-2"
+          >
+            <button
+              class="btn-primary inline-flex items-center gap-1.5 text-xs min-h-[44px] px-4 disabled:opacity-50"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-check w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 6 9 17l-5-5"
+                />
+              </svg>
+              Save
+            </button>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <div
+            class="flex flex-wrap items-center gap-2"
+          >
+            <button
+              class="btn-ghost border border-border inline-flex items-center gap-1.5 text-xs min-h-[44px] px-4 disabled:opacity-50"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-eye w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                />
+              </svg>
+              Preview
+            </button>
+            <button
+              class="btn-primary inline-flex items-center gap-1.5 text-xs min-h-[44px] px-4 disabled:opacity-50"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-trash2 w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 6h18"
+                />
+                <path
+                  d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                />
+                <path
+                  d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                />
+                <line
+                  x1="10"
+                  x2="10"
+                  y1="11"
+                  y2="17"
+                />
+                <line
+                  x1="14"
+                  x2="14"
+                  y1="11"
+                  y2="17"
+                />
+              </svg>
+              Clean now
+            </button>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <h4
+            class="text-xs font-medium text-gray-300"
+          >
+            Recent runs
+          </h4>
+          <p
+            class="text-xs text-gray-500"
+          >
+            No runs yet.
+          </p>
+        </div>
+        <p
+          class="text-[11px] text-gray-500 break-all"
+        >
+          Settings file:
+           
+          <code
+            class="font-mono text-gray-400"
+            dir="ltr"
+          >
+            /x/disk-janitor.json
           </code>
         </p>
       </div>

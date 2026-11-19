@@ -665,5 +665,84 @@
     "configPath": "Config file:",
     "fieldAuto": "Verify automatically",
     "fieldAutoHint": "After each finished turn, when there is a new commit (waits 2 minutes)."
+  },
+  "disk": {
+    "title": "Disk cleanup",
+    "description": "Keeps free space on this computer's disk by removing only temporary files that can be re-created.",
+    "loading": "Loading…",
+    "loadError": "Could not load the disk status: {{message}}",
+    "freeUnknown": "Free space unknown",
+    "freeLabel": "Free:",
+    "ofTotal": "of",
+    "belowFloor": "Below the minimum. Clean up now.",
+    "belowTarget": "Below the target. A cleanup would help.",
+    "neverDeleted": "Never deleted: code, conversation history, the Recycle Bin, personal files.",
+    "auto": "Automatic cleanup",
+    "autoHint": "When free space drops below the minimum, clean up until the target is reached.",
+    "floor": "Minimum free (GB)",
+    "target": "Target free (GB)",
+    "save": "Save",
+    "saved": "Saved",
+    "saveError": "Could not save: {{message}}",
+    "preview": "Preview",
+    "cleanNow": "Clean now",
+    "running": "Cleaning… this can take 1–2 minutes.",
+    "previewRunning": "Checking… nothing is deleted. This can take a minute.",
+    "cleanupError": "Cleanup failed: {{message}}",
+    "confirmTitle": "Clean the disk now?",
+    "confirmMessage": "Only temporary and re-creatable files are deleted (old temp files, caches, old installers). Code, conversation history, the Recycle Bin and personal files are never touched. This can take 1–2 minutes.",
+    "confirmYes": "Clean now",
+    "confirmCancel": "Cancel",
+    "resultPreview": "Preview – nothing was deleted. Would free {{size}}",
+    "resultDone": "Done – freed {{size}}",
+    "colStep": "What",
+    "colFreed": "Size",
+    "colRemoved": "Items",
+    "stepError": "Error:",
+    "historyTitle": "Recent runs",
+    "historyEmpty": "No runs yet.",
+    "historyFreed": "freed",
+    "historyWould": "would free",
+    "suggestionsTitle": "Needs your decision",
+    "suggestionsHint": "Bigger savings that are never done automatically.",
+    "configPath": "Settings file:",
+    "indicator": "Free disk",
+    "indicatorTitle": "Free disk space: {{size}}. Open disk cleanup",
+    "steps": {
+      "verify_copies": "Old verification copies",
+      "monitor_installers": "Old Monitor installers",
+      "temp_old": "Old temporary files",
+      "claude_scratch_old": "Old Claude scratch files",
+      "npm_cache": "npm cache",
+      "tool_temp": "Tools' temporary files",
+      "next_cache": "Next.js build cache"
+    },
+    "reasons": {
+      "auto": "Automatic",
+      "manual": "Manual",
+      "preview": "Preview"
+    },
+    "suggestions": {
+      "windows_update": {
+        "title": "Windows Update cache",
+        "text": "Use Windows \"Disk Cleanup\" as administrator and pick Windows Update Cleanup."
+      },
+      "hibernation": {
+        "title": "Hibernation file",
+        "text": "Turn off hibernation (deep sleep) to free the space it reserves."
+      },
+      "downloads": {
+        "title": "Downloads folder",
+        "text": "Old videos and installer files in Downloads."
+      },
+      "worktrees": {
+        "title": "Old worktrees",
+        "text": "Old working copies of projects."
+      },
+      "app_data": {
+        "title": "App data",
+        "text": "Large app databases (for example Deepchart). Clean them from inside the app."
+      }
+    }
   }
 }

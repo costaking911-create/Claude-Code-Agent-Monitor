@@ -665,5 +665,84 @@
     "configPath": "配置文件：",
     "fieldAuto": "自动验证",
     "fieldAutoHint": "每轮结束后，如有新提交则验证（等待 2 分钟）。"
+  },
+  "disk": {
+    "title": "磁盘清理",
+    "description": "只删除可重新生成的临时文件，保持本机磁盘的可用空间。",
+    "loading": "加载中…",
+    "loadError": "无法加载磁盘状态：{{message}}",
+    "freeUnknown": "可用空间未知",
+    "freeLabel": "可用：",
+    "ofTotal": "/",
+    "belowFloor": "低于最低值，请立即清理。",
+    "belowTarget": "低于目标值，清理会有帮助。",
+    "neverDeleted": "绝不删除：代码、对话历史、回收站、个人文件。",
+    "auto": "自动清理",
+    "autoHint": "可用空间低于最低值时，清理直到达到目标值。",
+    "floor": "最低可用 (GB)",
+    "target": "目标可用 (GB)",
+    "save": "保存",
+    "saved": "已保存",
+    "saveError": "无法保存：{{message}}",
+    "preview": "预览",
+    "cleanNow": "立即清理",
+    "running": "正在清理… 可能需要 1–2 分钟。",
+    "previewRunning": "正在检查… 不会删除任何内容。可能需要一分钟。",
+    "cleanupError": "清理失败：{{message}}",
+    "confirmTitle": "立即清理磁盘？",
+    "confirmMessage": "只删除临时文件和可重新生成的文件（旧临时文件、缓存、旧安装包）。代码、对话历史、回收站和个人文件绝不会被触碰。可能需要 1–2 分钟。",
+    "confirmYes": "立即清理",
+    "confirmCancel": "取消",
+    "resultPreview": "预览 – 未删除任何内容。可释放 {{size}}",
+    "resultDone": "完成 – 已释放 {{size}}",
+    "colStep": "项目",
+    "colFreed": "大小",
+    "colRemoved": "数量",
+    "stepError": "错误：",
+    "historyTitle": "最近运行",
+    "historyEmpty": "暂无运行记录。",
+    "historyFreed": "已释放",
+    "historyWould": "可释放",
+    "suggestionsTitle": "需要你决定",
+    "suggestionsHint": "更大的节省，绝不会自动执行。",
+    "configPath": "设置文件：",
+    "indicator": "磁盘可用",
+    "indicatorTitle": "磁盘可用空间：{{size}}。打开磁盘清理",
+    "steps": {
+      "verify_copies": "旧的验证副本",
+      "monitor_installers": "旧的 Monitor 安装包",
+      "temp_old": "旧临时文件",
+      "claude_scratch_old": "旧的 Claude 草稿文件",
+      "npm_cache": "npm 缓存",
+      "tool_temp": "工具临时文件",
+      "next_cache": "Next.js 构建缓存"
+    },
+    "reasons": {
+      "auto": "自动",
+      "manual": "手动",
+      "preview": "预览"
+    },
+    "suggestions": {
+      "windows_update": {
+        "title": "Windows Update 缓存",
+        "text": "以管理员身份使用 Windows「磁盘清理」。"
+      },
+      "hibernation": {
+        "title": "休眠",
+        "text": "关闭休眠以释放它预留的空间。"
+      },
+      "downloads": {
+        "title": "下载文件夹",
+        "text": "下载文件夹中的旧视频和安装包。"
+      },
+      "worktrees": {
+        "title": "旧 worktree",
+        "text": "项目的旧工作副本。"
+      },
+      "app_data": {
+        "title": "应用数据",
+        "text": "Deepchart 等应用的大型数据库。请在应用内清理。"
+      }
+    }
   }
 }

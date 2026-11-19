@@ -298,6 +298,7 @@ import {
   FolderTree,
   Github,
   Globe,
+  HardDrive,
   Heart,
   History,
   Keyboard,
@@ -588,6 +589,7 @@ export const SETTINGS_SECTION_COMMANDS: { id: string; labelKey: string; icon: Lu
   { id: "notifications", labelKey: "settings:notifications.title", icon: Bell },
   { id: "alerts", labelKey: "settings:alertsHub.title", icon: BellRing },
   { id: "verification", labelKey: "settings:verify.title", icon: ShieldCheck },
+  { id: "disk", labelKey: "settings:disk.title", icon: HardDrive },
   { id: "data", labelKey: "settings:data.title", icon: Database },
   { id: "about", labelKey: "settings:about.title", icon: Server },
 ];

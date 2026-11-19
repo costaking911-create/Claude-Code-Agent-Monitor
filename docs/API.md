@@ -1082,6 +1082,29 @@ failure, no count found, or 0 tests), `error` (low disk, extraction failure, das
 Auto-verify: two minutes after a session's `Stop` hook (debounced per session), a project with `autoVerify` (default `true`) is verified when its current commit has no queued/running/verified/failed verification yet. WebSocket message `verification_updated` carries the row on every status change. Push kinds
 `verified` / `verify_failed` are sent whenever `DASHBOARD_PUSH_EVENTS` enables any kind.
 
+### Disk cleanup
+
+Automatic disk cleanup (`server/lib/disk-janitor.js`). Every 10 minutes the server checks free space
+on the drive that holds the temp folder; below `floorGb` (default 3) it runs safe steps in order —
+`verify_copies`, `monitor_installers`, `temp_old` (3+ days), `claude_scratch_old` (7+ days),
+`npm_cache` (`_cacache` idle 2+ days; `_npx` is never touched), `tool_temp` (7+ days), `next_cache` — until `targetGb`
+(default 5) is free, at most once every 30 minutes. An entry counts as old only when every file and
+folder inside it is older than the step's age. Source code, git repositories, transcripts, the
+dashboard database, the Recycle Bin and personal files are never touched. Settings live in
+`disk-janitor.json` next to the `.env` (`DASHBOARD_DISK_JANITOR_CONFIG`); `DASHBOARD_DISK_JANITOR=0`
+disables the scheduler. History: `<data dir>/disk-janitor-history.json` (last 50 runs).
+
+```http
+GET  /api/disk                 # { path, free_bytes, total_bytes, config, below_floor, running, history, suggestions }
+POST /api/disk/cleanup         # { "dryRun": true } previews; → { result, ...status }
+PUT  /api/disk/config          # { enabled, floorGb, targetGb } (clamped; target ≥ floor)
+```
+
+WebSocket `disk_cleanup` carries each run. An automatic run sends a push (when push is enabled)
+when it freed 100 MB or more; the "still under the floor" warning is sent at most once a day. After
+an automatic run that freed under 100 MB, the next one waits 6 hours instead of 30 minutes. A
+preview in progress never stands in for a real cleanup.
+
 ### Webhooks
 
 The `/api/webhooks/*` namespace manages alert-delivery targets and their audit log.
