@@ -134,17 +134,20 @@ before(async () => {
   BASE = `http://127.0.0.1:${server.address().port}`;
 });
 
-after(() => {
-  server?.close();
+after(async () => {
+  await new Promise((resolve) => (server ? server.close(() => resolve()) : resolve()));
   try {
     db.close();
   } catch {
     /* ignore */
   }
-  try {
-    fs.rmSync(TMP, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 });
-  } catch {
-    /* a browser may still hold its profile for a moment on Windows */
+  // A browser helper process may hold its profile for a moment on Windows: retry for ~10 s.
+  for (let i = 0; i < 20 && fs.existsSync(TMP); i++) {
+    try {
+      fs.rmSync(TMP, { recursive: true, force: true });
+    } catch {
+      await new Promise((r) => setTimeout(r, 500));
+    }
   }
 });
 
