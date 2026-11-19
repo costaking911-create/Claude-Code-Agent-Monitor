@@ -1858,6 +1858,17 @@ export const api = {
       if (!res.ok) throw new ApiError(`HTTP ${res.status}`, res.status);
       return res.text();
     },
+    /** GET /api/verifications/:id/screenshot - the visual check's phone-size screenshot (PNG). */
+    screenshot: async (id: number): Promise<Blob> => {
+      const res = await fetch(
+        `${BASE}/verifications/${encodeURIComponent(String(id))}/screenshot`,
+        {
+          headers: authHeaders(),
+        }
+      );
+      if (!res.ok) throw new ApiError(`HTTP ${res.status}`, res.status);
+      return res.blob();
+    },
     /** GET /api/verifications/config - the per-project commands and the config file path. */
     getConfig: () => request<VerifyConfig>("/verifications/config"),
     /** PUT /api/verifications/config - replace the project list. Rejects with an

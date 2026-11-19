@@ -94,7 +94,61 @@ function validateProject(p, i) {
   timeoutSec = Math.min(MAX_TIMEOUT, Math.max(MIN_TIMEOUT, Math.round(timeoutSec)));
   // Verify automatically after a session's turn ends (on a new commit). On unless set to false.
   const autoVerify = p.autoVerify !== false;
-  return { dir: path.resolve(dir), setupCmd, checkCmd, testCountRegex, timeoutSec, autoVerify };
+  const out = {
+    dir: path.resolve(dir),
+    setupCmd,
+    checkCmd,
+    testCountRegex,
+    timeoutSec,
+    autoVerify,
+  };
+  const visual = validateVisual(p.visual, field("visual"));
+  if (visual) out.visual = visual;
+  return out;
+}
+
+const clampNum = (v, min, max, dflt) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dflt;
+};
+
+/**
+ * Optional visual check (server/lib/visual-check.js): open the app at phone size after the tests
+ * pass. `null`/`false`/missing = off. Throws ConfigError.
+ * @param {any} v
+ * @param {string} f - Error field prefix.
+ */
+function validateVisual(v, f) {
+  if (v == null || v === false) return null;
+  if (typeof v !== "object" || Array.isArray(v))
+    throw new ConfigError("visual must be an object", f);
+  if (v.enabled === false) return null;
+  const text = (k, max) => {
+    const s = v[k] == null ? "" : String(v[k]).trim();
+    if (s.length > max || /[\r\n\0]/.test(s)) throw new ConfigError(`${k} is invalid`, `${f}.${k}`);
+    return s;
+  };
+  const serveCmd = text("serveCmd", MAX_CMD);
+  const pagePath = text("path", 500) || "/";
+  if (!pagePath.startsWith("/")) throw new ConfigError("path must start with /", `${f}.path`);
+  const url = text("url", 500);
+  if (url) {
+    // Only the local copy is ever opened: a loopback address with the {port} placeholder.
+    if (!/^http:\/\/(127\.0\.0\.1|localhost):\{port\}(\/|$)/.test(url))
+      throw new ConfigError("url must be http://127.0.0.1:{port}/…", `${f}.url`);
+  }
+  const readyExpr = text("readyExpr", 1000);
+  const out = {
+    path: pagePath,
+    waitMs: Math.round(clampNum(v.waitMs, 0, 120000, 5000)),
+    width: Math.round(clampNum(v.width, 240, 1600, 390)),
+    height: Math.round(clampNum(v.height, 320, 3000, 844)),
+    minVariety: clampNum(v.minVariety, 0, 1, 0.01),
+  };
+  if (serveCmd) out.serveCmd = serveCmd;
+  if (serveCmd && url) out.url = url;
+  if (readyExpr) out.readyExpr = readyExpr;
+  return out;
 }
 
 /** Validate a whole config body ({ projects: [...] }). Throws ConfigError. */

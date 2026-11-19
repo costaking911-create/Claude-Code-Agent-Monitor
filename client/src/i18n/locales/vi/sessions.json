@@ -106,6 +106,8 @@
     "reason": "Lý do",
     "command": "Lệnh",
     "log": "Nhật ký",
+    "screenshot": "Ảnh chụp màn hình cỡ điện thoại",
+    "screenshotAlt": "Ứng dụng khi mở trong lần kiểm tra",
     "showAll": "Hiện tất cả ({{n}} dòng)",
     "showTail": "Chỉ hiện {{n}} dòng cuối",
     "noLog": "Không có nhật ký.",

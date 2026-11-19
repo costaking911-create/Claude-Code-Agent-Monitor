@@ -1148,7 +1148,7 @@ API 文档现已**全面覆盖**：每个后端路由都有文档说明（共 82
 
 ### Verifications（“已验证”）
 
-独立验证：仪表板在干净的 git (`read-tree` + `checkout-index`) 副本中重新运行项目自己的命令，结论只取自退出码和日志中的测试数量，绝不取自 agent。命令只存放在仪表板 `.env` 旁的 `verify.json`（可用 `DASHBOARD_VERIFY_CONFIG` 覆盖）；请求从不携带命令文本。一次只运行一个，磁盘可用空间低于 3 GB 时拒绝，临时副本总会删除，日志（已遮蔽密钥）位于 `<data dir>/verifications/`。自动验证（按项目，默认开启）：会话一轮结束两分钟后，尚未验证的提交会被自动验证。WebSocket：`verification_updated`。推送类型 `verified` / `verify_failed` 遵循 `DASHBOARD_PUSH_EVENTS`。
+独立验证：仪表板在干净的 git (`read-tree` + `checkout-index`) 副本中重新运行项目自己的命令，结论只取自退出码和日志中的测试数量，绝不取自 agent。命令只存放在仪表板 `.env` 旁的 `verify.json`（可用 `DASHBOARD_VERIFY_CONFIG` 覆盖）；请求从不携带命令文本。一次只运行一个，磁盘可用空间低于 3 GB 时拒绝，临时副本总会删除，日志（已遮蔽密钥）位于 `<data dir>/verifications/`。自动验证（按项目，默认开启）：会话一轮结束两分钟后，尚未验证的提交会被自动验证。WebSocket：`verification_updated`。推送类型 `verified` / `verify_failed` 遵循 `DASHBOARD_PUSH_EVENTS`。 每个项目可选的可视检查（`verify.json` 中的 `visual`）：测试通过后，在已安装的无头 Chrome/Edge 中以手机尺寸打开干净副本；页面错误、空白屏幕或 `readyExpr` 为假都会使验证失败，截图显示在会话中。
 
 | 方法 | 路径 | 描述 |
 | --- | --- | --- |
@@ -1156,6 +1156,7 @@ API 文档现已**全面覆盖**：每个后端路由都有文档说明（共 82
 | `GET` | `/api/sessions/:id/verifications` | 最近 20 次验证 + 当前 HEAD（过期检查） |
 | `GET` | `/api/verifications/latest?session_ids=a,b` | 每个会话的最新验证（列表徽章） |
 | `GET` | `/api/verifications/:id/log` | 日志文本，已遮蔽密钥 |
+| `GET` | `/api/verifications/:id/screenshot` | 可视检查的手机尺寸截图（PNG，已配置时） |
 | `GET` | `/api/verifications/config` | 按项目的命令 |
 | `PUT` | `/api/verifications/config` | 替换按项目的命令（已校验） |
 

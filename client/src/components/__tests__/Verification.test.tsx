@@ -15,6 +15,7 @@ import type { Verification, WSMessage } from "../../lib/types";
 const list = vi.fn();
 const start = vi.fn();
 const log = vi.fn();
+const screenshot = vi.fn();
 const subscribers: Array<(msg: WSMessage) => void> = [];
 
 vi.mock("../../lib/api", async (importOriginal) => {
@@ -26,6 +27,7 @@ vi.mock("../../lib/api", async (importOriginal) => {
         list: (...a: unknown[]) => list(...a),
         start: (...a: unknown[]) => start(...a),
         log: (...a: unknown[]) => log(...a),
+        screenshot: (...a: unknown[]) => screenshot(...a),
       },
     },
   };
@@ -127,6 +129,22 @@ describe("VerifyPanel", () => {
     expect(pre().split("\n")).toHaveLength(60);
     expect(pre().startsWith("line 1\n")).toBe(true);
     expect(onLatest).toHaveBeenLastCalledWith(expect.objectContaining({ id: 1 }), false);
+  });
+
+  it("shows the visual check screenshot when there is one", async () => {
+    list.mockResolvedValue({
+      verifications: [v({ has_screenshot: true })],
+      current_head: "abcdef1234567",
+    });
+    log.mockResolvedValue("ok");
+    screenshot.mockResolvedValue(new Blob(["png"], { type: "image/png" }));
+    const created = vi.fn(() => "blob:shot");
+    Object.assign(URL, { createObjectURL: created, revokeObjectURL: vi.fn() });
+    renderPanel();
+    const img = await screen.findByAltText("The app as it opened in the check");
+    expect(img).toHaveAttribute("src", "blob:shot");
+    expect(screenshot).toHaveBeenCalledWith(1);
+    expect(screen.getByText("Screenshot at phone size")).toBeInTheDocument();
   });
 
   it("marks a verified run on an older commit as stale", async () => {

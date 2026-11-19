@@ -67,6 +67,48 @@ function upsert(list: Verification[], v: Verification): Verification[] {
 }
 
 /**
+ * The visual check's phone-size screenshot (fetched with the auth header, shown as a thumbnail
+ * that opens full size).
+ *
+ * @param props - The verification id.
+ * @returns The screenshot, or nothing when it cannot be loaded.
+ */
+function VerifyScreenshot({ id }: { id: number }) {
+  const { t } = useTranslation("sessions");
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    let objectUrl: string | null = null;
+    api.verifications.screenshot(id).then(
+      (blob) => {
+        if (!alive) return;
+        objectUrl = URL.createObjectURL(blob);
+        setUrl(objectUrl);
+      },
+      () => undefined
+    );
+    return () => {
+      alive = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [id]);
+  if (!url) return null;
+  return (
+    <div className="space-y-1.5">
+      <span className="text-xs text-gray-400">{t("verify.screenshot")}</span>
+      <a href={url} target="_blank" rel="noreferrer" className="block w-fit">
+        <img
+          src={url}
+          alt={t("verify.screenshotAlt")}
+          className="max-h-80 w-auto rounded-lg border border-border"
+          loading="lazy"
+        />
+      </a>
+    </div>
+  );
+}
+
+/**
  * Verification panel for one session.
  *
  * @param props - See {@link VerifyPanelProps}.
@@ -267,6 +309,8 @@ export function VerifyPanel({ sessionId, onLatestChange }: VerifyPanelProps) {
               {latest.check_cmd}
             </code>
           </p>
+
+          {latestDone && latest.has_screenshot && <VerifyScreenshot id={latest.id} />}
 
           {latestDone && (
             <div className="space-y-1.5">

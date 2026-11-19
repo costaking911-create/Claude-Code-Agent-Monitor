@@ -8,6 +8,8 @@
  * never from anything the agent said. One verification runs at a time; the temp folder is always
  * deleted afterwards and a low-disk guard refuses to start below a free-space floor.
  * The commands come only from verify-config (the dashboard's own config file).
+ * When a project has a `visual` section, a passing run also opens the app at phone size in a
+ * headless browser (visual-check.js); the screenshot is kept next to the log as `<id>.png`.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
@@ -19,6 +21,7 @@ const path = require("path");
 const { spawn, execFile } = require("child_process");
 const { gitSafeEnv } = require("./git-env");
 const verifyConfig = require("./verify-config");
+const { runVisualCheck } = require("./visual-check");
 
 const MAX_PHASE_OUTPUT = 5 * 1024 * 1024;
 const MIN_FREE_BYTES = 3 * 1024 ** 3;
@@ -26,6 +29,7 @@ const TMP_PREFIX = "ccam-verify-";
 const DRAIN_GRACE_MS = 5000;
 const HARD_SETTLE_MS = 10000;
 const KEEP_LOGS = 200;
+const VISUAL_TIMEOUT_MS = 3 * 60 * 1000;
 /** Marker in each temp copy naming the process that owns it (see recover()). */
 const OWNER_FILE = ".ccam-verify-owner";
 const ORPHAN_MIN_AGE_MS = 6 * 60 * 60 * 1000;
@@ -291,6 +295,7 @@ function createVerifyRunner(deps = {}) {
   const git = deps.git || defaultGit;
   const extract = deps.extract || defaultExtract;
   const runShell = deps.runShell || defaultRunShell;
+  const visualCheck = deps.visualCheck || runVisualCheck;
   const getConfig = deps.getConfig || verifyConfig.readConfig;
   const tmpRoot = deps.tmpRoot || os.tmpdir();
   const logDir = deps.logDir;
@@ -467,6 +472,28 @@ function createVerifyRunner(deps = {}) {
       } else if (testsCount === 0) {
         verdict = "failed";
         reason = "0 tests ran";
+      } else if (project.visual) {
+        write(`\n# visual check (phone size)\n`);
+        let shell;
+        try {
+          shell = resolveShell();
+        } catch {
+          shell = null;
+        }
+        const v = await visualCheck({
+          dir: tmp,
+          visual: project.visual,
+          screenshotPath: path.join(logDir, `${row.id}.png`),
+          timeoutMs: Math.min(left(), VISUAL_TIMEOUT_MS),
+          write,
+          proc: { shell, killTree, env: childEnv() },
+        });
+        if (v.ok) {
+          verdict = "verified";
+        } else {
+          verdict = "failed";
+          reason = v.reason || "visual check failed";
+        }
       } else {
         verdict = "verified";
       }
@@ -509,6 +536,7 @@ function createVerifyRunner(deps = {}) {
         .sort((a, b) => b - a);
       for (const id of ids.slice(keepLogs)) {
         fs.rmSync(path.join(logDir, `${id}.log`), { force: true });
+        fs.rmSync(path.join(logDir, `${id}.png`), { force: true });
       }
     } catch {
       /* best effort */
@@ -632,11 +660,18 @@ function createVerifyRunner(deps = {}) {
   };
 }
 
+/** The visual check's screenshot for a row (next to its log), or null. */
+function screenshotPath(row) {
+  if (!row || !row.log_path) return null;
+  const p = row.log_path.replace(/\.log$/, ".png");
+  return p !== row.log_path && fs.existsSync(p) ? p : null;
+}
+
 /** Row as sent to clients (no local file path). */
 function publicRow(row) {
   if (!row) return row;
   const { log_path: _logPath, review_log_path: _reviewLog, ...rest } = row;
-  return rest;
+  return { ...rest, has_screenshot: Boolean(screenshotPath(row)) };
 }
 
 module.exports = {
@@ -644,6 +679,7 @@ module.exports = {
   maskSecrets,
   parseTestCount,
   publicRow,
+  screenshotPath,
   childEnv,
   defaultRunShell,
   VerifyError,

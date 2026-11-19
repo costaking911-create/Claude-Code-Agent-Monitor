@@ -1138,7 +1138,7 @@ npm run openapi:yaml
 
 ### Verificaciones ("Verificado")
 
-Verificación independiente: el panel vuelve a ejecutar los comandos del propio proyecto en una copia limpia de git (`read-tree` + `checkout-index`) y toma el veredicto del código de salida y del número de pruebas en el log, nunca del agente. Los comandos viven solo en `verify.json`, junto al `.env` del panel (`DASHBOARD_VERIFY_CONFIG` lo sustituye); las peticiones nunca llevan texto de comandos. Una ejecución a la vez, se rechaza con menos de 3 GB libres, la copia temporal siempre se borra, los logs (secretos ocultos) están en `<data dir>/verifications/`. Verificación automática (por proyecto, activada por defecto): dos minutos después de que termine un turno de la sesión, un commit aún no verificado se verifica automáticamente. WebSocket: `verification_updated`. Los tipos de push `verified` / `verify_failed` siguen `DASHBOARD_PUSH_EVENTS`.
+Verificación independiente: el panel vuelve a ejecutar los comandos del propio proyecto en una copia limpia de git (`read-tree` + `checkout-index`) y toma el veredicto del código de salida y del número de pruebas en el log, nunca del agente. Los comandos viven solo en `verify.json`, junto al `.env` del panel (`DASHBOARD_VERIFY_CONFIG` lo sustituye); las peticiones nunca llevan texto de comandos. Una ejecución a la vez, se rechaza con menos de 3 GB libres, la copia temporal siempre se borra, los logs (secretos ocultos) están en `<data dir>/verifications/`. Verificación automática (por proyecto, activada por defecto): dos minutos después de que termine un turno de la sesión, un commit aún no verificado se verifica automáticamente. WebSocket: `verification_updated`. Los tipos de push `verified` / `verify_failed` siguen `DASHBOARD_PUSH_EVENTS`. Comprobación visual opcional por proyecto (`visual` en `verify.json`): tras pasar las pruebas, la copia limpia se abre en un Chrome/Edge headless instalado en tamaño de teléfono; errores de página, pantalla en blanco o un `readyExpr` falso hacen fallar la verificación, y la captura se muestra en la sesión.
 
 | Método | Camino                          | Descripción                                             |
 | --- | --- | --- |
@@ -1146,6 +1146,7 @@ Verificación independiente: el panel vuelve a ejecutar los comandos del propio 
 | `GET` | `/api/sessions/:id/verifications` | Últimas 20 verificaciones + HEAD actual (comprobación de antigüedad) |
 | `GET` | `/api/verifications/latest?session_ids=a,b` | Última verificación por sesión (insignias de la lista) |
 | `GET` | `/api/verifications/:id/log` | Texto del log, secretos ocultos |
+| `GET` | `/api/verifications/:id/screenshot` | Captura en tamaño de teléfono de la comprobación visual (PNG, si está configurada) |
 | `GET` | `/api/verifications/config` | Comandos por proyecto |
 | `PUT` | `/api/verifications/config` | Reemplazar comandos por proyecto (validados) |
 

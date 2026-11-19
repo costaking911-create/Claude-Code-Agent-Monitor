@@ -106,6 +106,8 @@
     "reason": "Motivo",
     "command": "Comando",
     "log": "Registro",
+    "screenshot": "Captura en tamaño de teléfono",
+    "screenshotAlt": "La app tal como se abrió en la comprobación",
     "showAll": "Mostrar todo ({{n}} líneas)",
     "showTail": "Mostrar las últimas {{n}} líneas",
     "noLog": "No hay registro.",

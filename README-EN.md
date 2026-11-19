@@ -1148,7 +1148,7 @@ npm run openapi:yaml
 
 ### Verifications ("Verified")
 
-Independent verification: the dashboard re-runs the project's own commands in a clean git (`read-tree` + `checkout-index`) copy and takes the verdict from the exit code and the test count in the log, never from the agent. Commands live only in `verify.json` next to the dashboard `.env` (`DASHBOARD_VERIFY_CONFIG` overrides); requests never carry command text. One run at a time, refused below 3 GB free disk, temp copy always deleted, logs (secrets masked) under `<data dir>/verifications/`. Auto-verify (per project, on by default): two minutes after a session's turn ends, a commit that has not been verified yet is verified automatically. WebSocket: `verification_updated`. Push kinds `verified` / `verify_failed` follow `DASHBOARD_PUSH_EVENTS`.
+Independent verification: the dashboard re-runs the project's own commands in a clean git (`read-tree` + `checkout-index`) copy and takes the verdict from the exit code and the test count in the log, never from the agent. Commands live only in `verify.json` next to the dashboard `.env` (`DASHBOARD_VERIFY_CONFIG` overrides); requests never carry command text. One run at a time, refused below 3 GB free disk, temp copy always deleted, logs (secrets masked) under `<data dir>/verifications/`. Auto-verify (per project, on by default): two minutes after a session's turn ends, a commit that has not been verified yet is verified automatically. WebSocket: `verification_updated`. Push kinds `verified` / `verify_failed` follow `DASHBOARD_PUSH_EVENTS`. Optional visual check per project (`visual` in `verify.json`): after the tests pass, the clean copy is served and opened in an installed headless Chrome/Edge at phone size; page errors, a blank screen or a false `readyExpr` fail the verification, and the screenshot is shown on the session.
 
 | Method | Path | Description |
 | --- | --- | --- |
@@ -1156,6 +1156,7 @@ Independent verification: the dashboard re-runs the project's own commands in a 
 | `GET` | `/api/sessions/:id/verifications` | Last 20 verifications + current HEAD (stale check) |
 | `GET` | `/api/verifications/latest?session_ids=a,b` | Latest verification per session (list badges) |
 | `GET` | `/api/verifications/:id/log` | Log text, secrets masked |
+| `GET` | `/api/verifications/:id/screenshot` | Phone-size screenshot of the visual check (PNG, when configured) |
 | `GET` | `/api/verifications/config` | Per-project commands |
 | `PUT` | `/api/verifications/config` | Replace per-project commands (validated) |
 

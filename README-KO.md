@@ -1144,7 +1144,7 @@ npm run openapi:yaml
 
 ### Verifications ("검증됨")
 
-독립 검증: 대시보드가 깨끗한 git (`read-tree` + `checkout-index`) 사본에서 프로젝트 자체 명령을 다시 실행하고, 판정은 종료 코드와 로그의 테스트 수로만 내리며 agent의 말은 절대 쓰지 않습니다. 명령은 대시보드 `.env` 옆의 `verify.json`에만 있습니다(`DASHBOARD_VERIFY_CONFIG`로 재정의). 요청에는 명령 텍스트가 절대 포함되지 않습니다. 한 번에 하나만 실행하고, 여유 디스크가 3 GB 미만이면 거부하며, 임시 사본은 항상 삭제되고, 로그(비밀 가림)는 `<data dir>/verifications/`에 있습니다. 자동 검증(프로젝트별, 기본 켜짐): 세션의 턴이 끝나고 2분 뒤, 아직 검증되지 않은 커밋을 자동으로 검증합니다. WebSocket: `verification_updated`. 푸시 종류 `verified` / `verify_failed`는 `DASHBOARD_PUSH_EVENTS`를 따릅니다.
+독립 검증: 대시보드가 깨끗한 git (`read-tree` + `checkout-index`) 사본에서 프로젝트 자체 명령을 다시 실행하고, 판정은 종료 코드와 로그의 테스트 수로만 내리며 agent의 말은 절대 쓰지 않습니다. 명령은 대시보드 `.env` 옆의 `verify.json`에만 있습니다(`DASHBOARD_VERIFY_CONFIG`로 재정의). 요청에는 명령 텍스트가 절대 포함되지 않습니다. 한 번에 하나만 실행하고, 여유 디스크가 3 GB 미만이면 거부하며, 임시 사본은 항상 삭제되고, 로그(비밀 가림)는 `<data dir>/verifications/`에 있습니다. 자동 검증(프로젝트별, 기본 켜짐): 세션의 턴이 끝나고 2분 뒤, 아직 검증되지 않은 커밋을 자동으로 검증합니다. WebSocket: `verification_updated`. 푸시 종류 `verified` / `verify_failed`는 `DASHBOARD_PUSH_EVENTS`를 따릅니다. 프로젝트별 선택 화면 검사(`verify.json`의 `visual`): 테스트 통과 후 깨끗한 사본을 설치된 헤드리스 Chrome/Edge에서 휴대폰 크기로 엽니다. 페이지 오류, 빈 화면 또는 거짓 `readyExpr`이면 검증 실패이며 스크린샷은 세션에 표시됩니다.
 
 | 메서드 | 경로                          | 설명                                                    |
 | --- | --- | --- |
@@ -1152,6 +1152,7 @@ npm run openapi:yaml
 | `GET` | `/api/sessions/:id/verifications` | 최근 검증 20개 + 현재 HEAD(오래됨 확인) |
 | `GET` | `/api/verifications/latest?session_ids=a,b` | 세션별 최신 검증(목록 배지) |
 | `GET` | `/api/verifications/:id/log` | 로그 텍스트, 비밀 가림 |
+| `GET` | `/api/verifications/:id/screenshot` | 화면 검사의 휴대폰 크기 스크린샷 (PNG, 설정된 경우) |
 | `GET` | `/api/verifications/config` | 프로젝트별 명령 |
 | `PUT` | `/api/verifications/config` | 프로젝트별 명령 교체(검증됨) |
 

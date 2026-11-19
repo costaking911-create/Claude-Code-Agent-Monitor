@@ -106,6 +106,8 @@
     "reason": "이유",
     "command": "명령",
     "log": "로그",
+    "screenshot": "휴대폰 크기 스크린샷",
+    "screenshotAlt": "검사에서 열린 앱 화면",
     "showAll": "모두 보기 ({{n}}줄)",
     "showTail": "마지막 {{n}}줄만 보기",
     "noLog": "로그가 없습니다.",

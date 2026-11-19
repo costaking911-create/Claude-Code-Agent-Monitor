@@ -3228,6 +3228,8 @@ export interface Verification {
   verdict: "verified" | "failed" | "error" | null;
   /** Short English reason for a failed/error verdict. */
   reason: string | null;
+  /** True when the visual check saved a phone-size screenshot (GET /api/verifications/:id/screenshot). */
+  has_screenshot?: boolean;
   created_at: string;
   started_at: string | null;
   ended_at: string | null;

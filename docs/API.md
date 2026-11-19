@@ -1071,6 +1071,7 @@ POST /api/sessions/:id/verify            # body must be empty → 202 { verifica
 GET  /api/sessions/:id/verifications     # { verifications: [...20 newest], current_head }
 GET  /api/verifications/latest?session_ids=a,b   # { latest: { <sessionId>: Verification } }
 GET  /api/verifications/:id/log          # text/plain, last 5 MB
+GET  /api/verifications/:id/screenshot   # image/png from the visual check; 404 when none
 GET  /api/verifications/config           # { path, projects: [{ dir, setupCmd, checkCmd, testCountRegex, timeoutSec, autoVerify }] }
 PUT  /api/verifications/config           # same body; 400 { error: { code: "INVALID", message, field } }
 ```
@@ -1081,6 +1082,31 @@ row. Verdicts: `verified` (exit 0 and test count > 0), `failed` (non-zero exit, 
 failure, no count found, or 0 tests), `error` (low disk, extraction failure, dashboard restarted).
 Auto-verify: two minutes after a session's `Stop` hook (debounced per session), a project with `autoVerify` (default `true`) is verified when its current commit has no queued/running/verified/failed verification yet. WebSocket message `verification_updated` carries the row on every status change. Push kinds
 `verified` / `verify_failed` are sent whenever `DASHBOARD_PUSH_EVENTS` enables any kind.
+
+Optional visual check (`server/lib/visual-check.js`), per project in `verify.json`:
+
+```json
+"visual": {
+  "path": "/",
+  "waitMs": 60000,
+  "readyExpr": "!document.getElementById('boot')",
+  "serveCmd": "",
+  "url": "http://127.0.0.1:{port}/",
+  "width": 390,
+  "height": 844,
+  "minVariety": 0.01
+}
+```
+
+After the tests pass, the clean copy is served — by a built-in read-only static server, or by
+`serveCmd` with a free `PORT` and `url` (loopback only, `{port}` placeholder) — and opened in an
+installed Chrome/Edge (`DASHBOARD_BROWSER` overrides the path; nothing is downloaded) in headless
+mode at `width`×`height`, mobile, with touch. With `readyExpr` the check waits up to `waitMs`
+for it to be true; without it, it waits `waitMs`. The verdict becomes `failed` on an uncaught
+exception, a `console.error`, a failed load (except `/favicon.ico`), a blank screen (fewer than
+`minVariety` of the sampled pixels differ from the most common colour), or a false `readyExpr`.
+The screenshot is saved as `<data dir>/verifications/<id>.png` (pruned with the logs) and rows
+carry `has_screenshot`.
 
 ### Disk cleanup
 

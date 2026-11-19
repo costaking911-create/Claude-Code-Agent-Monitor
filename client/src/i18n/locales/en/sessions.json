@@ -106,6 +106,8 @@
     "reason": "Reason",
     "command": "Command",
     "log": "Log",
+    "screenshot": "Screenshot at phone size",
+    "screenshotAlt": "The app as it opened in the check",
     "showAll": "Show all ({{n}} lines)",
     "showTail": "Show last {{n}} lines",
     "noLog": "No log available.",

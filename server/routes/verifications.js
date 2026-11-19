@@ -19,7 +19,12 @@ const { broadcast } = require("../websocket");
 const { getDataDir } = require("../lib/claude-home");
 const { notifyTurn } = require("../lib/turn-notify");
 const verifyConfig = require("../lib/verify-config");
-const { createVerifyRunner, publicRow, VerifyError } = require("../lib/verify-runner");
+const {
+  createVerifyRunner,
+  publicRow,
+  screenshotPath,
+  VerifyError,
+} = require("../lib/verify-runner");
 
 const MAX_LOG_BYTES = 5 * 1024 * 1024;
 const LOOPBACK = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
@@ -175,6 +180,24 @@ verificationRoutes.get("/:id/log", (req, res) => {
   } catch {
     res.status(404).json({ error: { code: "NOT_FOUND", message: "log file is gone" } });
   }
+});
+
+// The visual check's phone-size screenshot (PNG), when the project has one configured.
+verificationRoutes.get("/:id/screenshot", (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: { code: "INVALID", message: "bad id" } });
+  }
+  const row = db.prepare("SELECT log_path FROM verifications WHERE id = ?").get(id);
+  const file = row ? screenshotPath(row) : null;
+  if (!file)
+    return res.status(404).json({ error: { code: "NOT_FOUND", message: "no screenshot" } });
+  res.set("Cache-Control", "private, max-age=3600");
+  res.type("image/png").sendFile(path.resolve(file), (err) => {
+    if (err && !res.headersSent) {
+      res.status(404).json({ error: { code: "NOT_FOUND", message: "screenshot is gone" } });
+    }
+  });
 });
 
 module.exports = { sessionRoutes, verificationRoutes, sameHostGuard, getRunner, setRunner };

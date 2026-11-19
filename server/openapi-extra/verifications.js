@@ -56,6 +56,7 @@ const schemas = {
       setup_exit: { type: "integer", nullable: true },
       check_exit: { type: "integer", nullable: true },
       tests_count: { type: "integer", nullable: true },
+      has_screenshot: { type: "boolean", description: "The visual check saved a screenshot" },
       timed_out: { type: "integer", enum: [0, 1] },
       status: { type: "string", enum: ["queued", "running", "done"] },
       verdict: { type: "string", enum: ["verified", "failed", "error"], nullable: true },
@@ -81,6 +82,21 @@ const schemas = {
         type: "boolean",
         default: true,
         description: "Verify automatically two minutes after a turn ends, when the commit is new.",
+      },
+      visual: {
+        type: "object",
+        description:
+          "Optional visual check: open the clean copy at phone size in a headless Chrome/Edge after the tests pass.",
+        properties: {
+          path: { type: "string", default: "/" },
+          waitMs: { type: "integer", minimum: 0, maximum: 120000, default: 5000 },
+          readyExpr: { type: "string", description: "JavaScript that must become true" },
+          serveCmd: { type: "string", description: "Own server, started with PORT set" },
+          url: { type: "string", description: "http://127.0.0.1:{port}/… (with serveCmd)" },
+          width: { type: "integer", minimum: 240, maximum: 1600, default: 390 },
+          height: { type: "integer", minimum: 320, maximum: 3000, default: 844 },
+          minVariety: { type: "number", minimum: 0, maximum: 1, default: 0.01 },
+        },
       },
     },
   },
@@ -193,6 +209,22 @@ const paths = {
       parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
       responses: {
         200: { description: "Log text", content: { "text/plain": { schema: { type: "string" } } } },
+        400: err,
+        404: err,
+      },
+    },
+  },
+  "/api/verifications/{id}/screenshot": {
+    get: {
+      tags: ["Verifications"],
+      operationId: "getVerificationScreenshot",
+      summary: "Phone-size screenshot from the visual check",
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: {
+        200: {
+          description: "PNG",
+          content: { "image/png": { schema: { type: "string", format: "binary" } } },
+        },
         400: err,
         404: err,
       },
